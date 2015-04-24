@@ -1,0 +1,13 @@
+<p id="notice"><%= notice %></p>
+
+<% @image.children.each do |image| %>
+  <%= link_to image_tag(image.images.first.try(:id), size: '100x100'), image %>
+<% end %>
+<br />
+
+<% @image.images.each do |image| %>
+  <%= image_tag(image.id, size: '50x50') %>
+<% end %>
+<br />
+
+<%= link_to 'Back', images_path %>

@@ -20,6 +20,7 @@ gem 'hirb'
 # Image Upload
 gem 'rmagick'
 gem 'mini_magick'
+gem 'exiftool_vendored'
 
 # Bootstrap CSS
 gem 'bootstrap-sass'
