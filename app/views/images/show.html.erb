@@ -1,13 +1,23 @@
-<p id="notice"><%= notice %></p>
+<div class="row">
+  <div class="column-md-12">
+    <p id="notice"><%= notice %></p>
+  </div>
+</div>
 
-<% @image.children.each do |image| %>
-  <%= link_to image_tag(image.images.first.try(:id), size: '100x100'), image %>
-<% end %>
-<br />
+<div class="row">
+  <% @image.children.each do |image| %>
+    <div class="col-md-1">
+      <%= link_to image_tag(image.images.first.try(:id) || 'default_gallery_image.png', class: 'img-responsive img-thumbnail'), image, class: 'thumbnail' %>
+    </div>
+  <% end %>
+</div>
 
-<% @image.images.each do |image| %>
-  <%= image_tag(image.id, size: '50x50') %>
-<% end %>
-<br />
+<div class="row">
+  <% @image.images.each do |image| %>
+    <div class="col-md-1">
+      <%= image_tag(image.id, class: 'img-responsive img-thumbnail') %>
+    </div>
+  <% end %>
+</div>
 
 <%= link_to 'Back', images_path %>

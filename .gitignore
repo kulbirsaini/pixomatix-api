@@ -22,3 +22,7 @@ public/assets
 public/uploads/
 public/sitemap.xml
 public/sitemap.xml.gz
+
+#bower
+node_modules/
+npm-debug.log
