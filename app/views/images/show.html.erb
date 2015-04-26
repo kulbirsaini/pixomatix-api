@@ -6,7 +6,7 @@
 
 <div class="row">
   <% @image.children.each do |image| %>
-    <div class="col-md-1">
+    <div class="col-md-1 top-buffer">
       <%= link_to image_tag(image.images.first.try(:id) || 'default_gallery_image.png', class: 'img-responsive img-thumbnail'), image, class: 'thumbnail' %>
     </div>
   <% end %>
@@ -14,10 +14,14 @@
 
 <div class="row">
   <% @image.images.each do |image| %>
-    <div class="col-md-1">
-      <%= image_tag(image.id, class: 'img-responsive img-thumbnail') %>
+    <div class="col-md-1 top-buffer">
+      <%= link_to image_tag(image.id, class: 'img-responsive img-thumbnail'), hdtv_image_path(image) %>
     </div>
   <% end %>
 </div>
 
-<%= link_to 'Back', images_path %>
+<div class="row top-buffer">
+  <div class="column-md-12 text-center">
+  <%= link_to 'Back', @image.parent.nil? ? images_path : @image.parent, class: 'btn btn-success' %>
+  </div>
+</div>

@@ -6,6 +6,24 @@ module Pixomatix
       @directories = directories || IMAGE_ROOTS
     end
 
+    def self.generate_thumbnails
+      Image.images.each do |image|
+        filepath = image.thumbnail_path
+        next if File.exists?(filepath)
+        image.scale(Rails.application.config.x.thumbnail_width, Rails.application.config.x.thumbnail_height, filepath)
+        p filepath
+      end
+    end
+
+    def self.generate_hdtv_images
+      Image.images.each do |image|
+        filepath = image.hdtv_path
+        next if File.exists?(filepath)
+        image.resize(Rails.application.config.x.hdtv_width, Rails.application.config.x.hdtv_height, filepath)
+        p filepath
+      end
+    end
+
     def populate_images(directory = nil, parent = nil)
       if directory
         parent = Image.where(path: directory, parent: parent, filename: nil).first_or_create

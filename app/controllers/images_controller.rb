@@ -10,8 +10,18 @@ class ImagesController < ApplicationController
   # GET /images/1
   # GET /images/1.json
   def show
-    if @image.filename.present?
-      send_file File.join(@image.path, @image.filename), type: @image.mime_type, disposition: 'inline'
+    if @image.image?
+      if params[:type] == :original
+        image_path = @image.original_path
+        image_path = 'default_gallery_image_original.png' unless File.exists?(image_path)
+      elsif params[:type] == :hdtv
+        image_path = @image.hdtv_path
+        image_path = 'default_gallery_image_hdtv.png' unless File.exists?(image_path)
+      else
+        image_path = @image.thumbnail_path
+        image_path = 'default_gallery_image_thumbnail.png' unless File.exists?(image_path)
+      end
+      send_file image_path, type: @image.mime_type, disposition: 'inline'
     end
   end
 
@@ -23,6 +33,6 @@ class ImagesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def image_params
-      params.require(:image).permit(:path, :filename, :width, :height, :size, :parent_id)
+      params.require(:image).permit(:path, :filename, :width, :height, :size, :parent_id, :type)
     end
 end
