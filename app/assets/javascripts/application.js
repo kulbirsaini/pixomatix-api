@@ -16,3 +16,12 @@
 //= require turbolinks
 //= require angular/angular
 //= require_tree .
+
+
+var imageGalleryApp = angular.module("ImageGalleryApp", [
+  'imageGalleryControllers',
+]);
+
+jQuery(document).on('ready page:load', function(arguments) {
+  angular.bootstrap(document.body, ['ImageGalleryApp'])
+});

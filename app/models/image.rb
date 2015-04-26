@@ -7,6 +7,7 @@ class Image < ActiveRecord::Base
 
   scope :root, -> { where(parent_id: nil) }
   scope :images, -> { where.not(filename: nil) }
+  scope :ordered, -> { order(:filename) }
 
   def directory_tree
     return nil if !image?

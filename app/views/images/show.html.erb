@@ -1,27 +1,26 @@
-<div class="row">
-  <div class="column-md-12">
-    <p id="notice"><%= notice %></p>
-  </div>
-</div>
+<%= render partial: 'shared/notice', locals: { notice: notice } %>
 
 <div class="row">
   <% @image.children.each do |image| %>
     <div class="col-md-1 top-buffer">
-      <%= link_to image_tag(image.images.first.try(:id) || 'default_gallery_image.png', class: 'img-responsive img-thumbnail'), image, class: 'thumbnail' %>
+      <% if image.children.count > 0 && image.images.count > 0 %>
+        <%= link_to image_tag(thumbnail_image_path(image.images.ordered.first.id), class: 'img-responsive img-thumbnail'), image, class: 'thumbnail' %>
+      <% elsif image.images.count > 0 %>
+        <%= link_to image_tag(thumbnail_image_path(image.images.ordered.first.id), class: 'img-responsive img-thumbnail'), '', class: 'thumbnail', 'ng-click': "getImageData(#{image.id})", data: { toggle: 'modal', target: '#image-modal' } %>
+      <% else %>
+        <%= link_to image_tag('default_gallery_image_thumbnail.png', class: 'img-responsive img-thumbnail'), image, class: 'thumbnail' %>
+      <% end %>
     </div>
   <% end %>
-</div>
-
-<div class="row">
-  <% @image.images.each do |image| %>
+  <% if @image.images.count > 0 %>
     <div class="col-md-1 top-buffer">
-      <%= link_to image_tag(image.id, class: 'img-responsive img-thumbnail'), hdtv_image_path(image) %>
+      <%= link_to image_tag(thumbnail_image_path(@image.images.ordered.first.id), class: 'img-responsive img-thumbnail'), '', class: 'thumbnail', 'ng-click': "getImageData(#{@image.images.ordered.first.id})", data: { toggle: 'modal', target: '#image-modal' } %>
     </div>
   <% end %>
 </div>
 
 <div class="row top-buffer">
   <div class="column-md-12 text-center">
-  <%= link_to 'Back', @image.parent.nil? ? images_path : @image.parent, class: 'btn btn-success' %>
+    <%= link_to 'Back', @image.parent.nil? ? images_path : @image.parent, class: 'btn btn-success' %>
   </div>
 </div>

@@ -1,13 +1,12 @@
-<div class="row">
-  <div class="column-md-12">
-    <p id="notice"><%= notice %></p>
-  </div>
-</div>
-
+<%= render partial: 'shared/notice', locals: { notice: notice } %>
 <div class="row">
   <% @images.each do |image| %>
     <div class="col-md-1">
-      <%= link_to image_tag(image.images.first.try(:id) || 'default_gallery_image.png', class: 'img-responsive img-thumbnail'), image, class: 'thumbnail' %>
+      <% if image.images.first %>
+        <%= link_to image_tag(thumbnail_image_path(image.images.ordered.first.id), class: 'img-responsive img-thumbnail'), image, class: 'thumbnail' %>
+      <% else %>
+        <%= link_to image_tag('default_gallery_image_thumbnail.png', class: 'img-responsive img-thumbnail'), image, class: 'thumbnail' %>
+      <% end %>
     </div>
   <% end %>
 </div>

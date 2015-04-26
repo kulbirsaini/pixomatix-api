@@ -16,3 +16,24 @@
 @import "bootstrap";
 
 .top-buffer { margin-top: 20px; }
+
+.previous, .next, .first, .last, .back { position: fixed; }
+.previous, .first { left: 15px; }
+.next, .last { right: 15px; }
+.previous, .next { top: 45%; }
+.first, .last { top: 50%; }
+.back { bottom: 20px; left: 50%; }
+.img-center { margin: 0 auto; }
+.img-verticle-align {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  //display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.hidden { display: none; }
+.modal-custom { width: 100%; height: 100%; margin: 0 auto; }
+.modal-body { padding: 0px; }

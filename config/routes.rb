@@ -1,6 +1,7 @@
 Rails.application.routes.draw do
-  get '/images/:id/original' => 'images#show', as: :original_image, type: :original
-  get '/images/:id/hdtv' => 'images#show', as: :hdtv_image, type: :hdtv
+  get '/images/:id/thumbnail' => 'images#stream', as: :thumbnail_image
+  get '/images/:id/original' => 'images#stream', as: :original_image, type: :original
+  get '/images/:id/hdtv' => 'images#stream', as: :hdtv_image, type: :hdtv
   resources :images
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".

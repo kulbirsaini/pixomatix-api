@@ -1,0 +1,38 @@
+var imageGalleryControllers = angular.module("imageGalleryControllers", []);
+
+imageGalleryControllers.controller('ImageGalleryCtrl', function($scope, $http, $window){
+  $scope.qualities = ['thumbnail', 'hdtv', 'original'];
+  $scope.quality = $scope.qualities[1];
+
+  $scope.nextImage = function(){
+    if ($scope.current_index + 1 < $scope.image_ids.length){
+      $scope.current_index += 1;
+    }
+  };
+
+  $scope.previousImage = function(){
+    if ($scope.current_index - 1 > -1){
+      $scope.current_index -= 1;
+    }
+  };
+
+  $scope.firstImage = function(){
+    $scope.current_index = 0;
+  };
+
+  $scope.lastImage = function(){
+    $scope.current_index = $scope.image_ids.length - 1;
+  }
+
+  $scope.getImageData = function(image_id){
+    $http.get('<%= Rails.application.routes.url_helpers.images_path %>/' + image_id + '.json')
+    .success(function(data, status, headers, config){
+      $scope.image_ids = data;
+      $scope.current_index = 0;
+      console.log($scope.image_ids);
+    })
+    .error(function(data, status, headers, config){
+      console.log("Error in fetching image IDs");
+    });
+  };
+});

@@ -1,5 +1,5 @@
 class ImagesController < ApplicationController
-  before_action :set_image, only: [:show]
+  before_action :set_image, only: [:show, :stream]
 
   # GET /images
   # GET /images.json
@@ -10,18 +10,27 @@ class ImagesController < ApplicationController
   # GET /images/1
   # GET /images/1.json
   def show
+    render 'show_image', layout: false && return if @image.image? && params.has_key?(:show)
+  end
+
+  def stream
     if @image.image?
-      if params[:type] == :original
-        image_path = @image.original_path
-        image_path = 'default_gallery_image_original.png' unless File.exists?(image_path)
-      elsif params[:type] == :hdtv
-        image_path = @image.hdtv_path
-        image_path = 'default_gallery_image_hdtv.png' unless File.exists?(image_path)
+      if params[:show].present?
+        render 'show_image', layout: false
+        return
       else
-        image_path = @image.thumbnail_path
-        image_path = 'default_gallery_image_thumbnail.png' unless File.exists?(image_path)
+        if params[:type] == :original
+          image_path = @image.original_path
+          image_path = 'default_gallery_image_original.png' unless File.exists?(image_path)
+        elsif params[:type] == :hdtv
+          image_path = @image.hdtv_path
+          image_path = 'default_gallery_image_hdtv.png' unless File.exists?(image_path)
+        else
+          image_path = @image.thumbnail_path
+          image_path = 'default_gallery_image_thumbnail.png' unless File.exists?(image_path)
+        end
+        send_file image_path, type: @image.mime_type, disposition: 'inline'
       end
-      send_file image_path, type: @image.mime_type, disposition: 'inline'
     end
   end
 
