@@ -21,13 +21,14 @@ class ImagesController < ApplicationController
       else
         if params[:type] == :original
           image_path = @image.original_path
-          image_path = 'default_gallery_image_original.png' unless File.exists?(image_path)
+          image_path = File.join(Rails.root, 'app/assets/images/', 'default_gallery_image_original.png') unless File.exists?(image_path)
         elsif params[:type] == :hdtv
           image_path = @image.hdtv_path
-          image_path = 'default_gallery_image_hdtv.png' unless File.exists?(image_path)
+          image_path = @image.original_path unless File.exists?(image_path)
+          image_path = File.join(Rails.root, 'app/assets/images/', 'default_gallery_image_hdtv.png') unless File.exists?(image_path)
         else
           image_path = @image.thumbnail_path
-          image_path = 'default_gallery_image_thumbnail.png' unless File.exists?(image_path)
+          image_path = File.join(Rails.root, 'app/assets/images/', 'default_gallery_image_thumbnail.png') unless File.exists?(image_path)
         end
         send_file image_path, type: @image.mime_type, disposition: 'inline'
       end

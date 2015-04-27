@@ -21,6 +21,7 @@ gem 'hirb'
 gem 'rmagick'
 gem 'mini_magick'
 gem 'exiftool_vendored'
+gem 'mini_exiftool_vendored'
 
 # Bootstrap CSS
 gem 'bootstrap-sass'

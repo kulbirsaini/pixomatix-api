@@ -111,6 +111,9 @@ GEM
     mail (2.6.3)
       mime-types (>= 1.16, < 3)
     mime-types (2.4.3)
+    mini_exiftool (2.5.0)
+    mini_exiftool_vendored (9.2.7.v1)
+      mini_exiftool (>= 1.6.0)
     mini_magick (4.2.3)
     mini_portile (0.6.2)
     minitest (5.6.0)
@@ -214,6 +217,7 @@ DEPENDENCIES
   html5shiv-rails
   jbuilder (~> 2.0)
   jquery-rails
+  mini_exiftool_vendored
   mini_magick
   mysql2
   rails (= 4.2.1)
