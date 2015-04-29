@@ -21,6 +21,11 @@ class Image < ActiveRecord::Base
     File.join(parents.compact.reverse)
   end
 
+  def parent_directory(index = false)
+    return nil if parent.nil? || !parent.path.present?
+    index ? parent.id.to_s : parent.path
+  end
+
   def image?
     !filename.nil?
   end
@@ -35,19 +40,29 @@ class Image < ActiveRecord::Base
     nil
   end
 
-  def resize(width, height, filepath)
+  def resize_to_hdtv(height, filepath)
     return nil if !image?
-    FileUtils.mkdir_p(File.dirname(filepath))
     image = MiniMagick::Image.open(self.original_path)
-    rotated = image.height > image.width
-    image.rotate(90) if rotated
-    image.resize(width) if width < image.width
-    if height < image.height
+    if image.width >= image.height
+      if image.height <= height
+        image.destroy!
+        return
+      end
+    else
+      if image.width <= height
+        image.destroy!
+        return
+      end
+    end
+
+    FileUtils.mkdir_p(File.dirname(filepath))
+    if image.width >= image.height
       image.rotate(90)
       image.resize(height)
       image.rotate(-90)
+    else
+      image.resize(height)
     end
-    image.rotate(-90) if rotated
     image.write(filepath)
     image.destroy!
     nil
@@ -56,7 +71,7 @@ class Image < ActiveRecord::Base
   def thumbnail_path
     File.join(Rails.root,
               Rails.application.config.x.image_cache_dir,
-              self.directory_tree(true),
+              self.parent_directory(true),
               self.id.to_s + '_' +
                 Rails.application.config.x.thumbnail_width.to_s + 'x' +
                 Rails.application.config.x.thumbnail_height.to_s +
@@ -66,9 +81,8 @@ class Image < ActiveRecord::Base
   def hdtv_path
     File.join(Rails.root,
               Rails.application.config.x.image_cache_dir,
-              self.directory_tree(true),
+              self.parent_directory(true),
               self.id.to_s + '_' +
-                Rails.application.config.x.hdtv_width.to_s + 'x' +
                 Rails.application.config.x.hdtv_height.to_s +
                 File.extname(self.filename))
   end

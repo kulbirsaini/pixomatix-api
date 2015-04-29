@@ -2,6 +2,7 @@
 
 <div class="row">
   <% @image.children.each do |image| %>
+    <% next if image.children.count == 0 && image.images.count == 0 %>
     <div class="col-md-1 top-buffer">
       <% if image.children.count > 0 && image.images.count > 0 %>
         <%= link_to image_tag(thumbnail_image_path(image.images.ordered.first.id), class: 'img-responsive img-thumbnail'), image, class: 'thumbnail' %>

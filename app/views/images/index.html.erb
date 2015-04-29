@@ -1,6 +1,7 @@
 <%= render partial: 'shared/notice', locals: { notice: notice } %>
 <div class="row">
   <% @images.each do |image| %>
+    <% next if image.children.count == 0 && image.images.count == 0 %>
     <div class="col-md-1">
       <% if image.images.first %>
         <%= link_to image_tag(thumbnail_image_path(image.images.ordered.first.id), class: 'img-responsive img-thumbnail'), image, class: 'thumbnail' %>
