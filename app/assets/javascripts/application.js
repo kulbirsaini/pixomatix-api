@@ -33,8 +33,8 @@ galleryApp.config(['$routeProvider',
       templateUrl: 'gallery.html',
       controller: 'GalleryCtrl'
     }).
-    when('/images/:imageID', {
-      templateUrl: 'slideshow.html',
+    when('/images/:id', {
+      templateUrl: 'gallery.html',
       controller: 'GalleryCtrl'
     }).
     otherwise({

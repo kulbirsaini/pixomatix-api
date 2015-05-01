@@ -1,10 +1,8 @@
 <%= render partial: 'shared/notice', locals: { notice: notice } %>
-<div class="row">
-  <div ng-view></div>
-  <script type="text/ng-template" id="gallery.html">
-    <%= render partial: "images/gallery" %>
-  </script>
-  <script type="text/ng-template" id="slideshow.html">
-    <%= render partial: "images/slideshow" %>
-  </script>
-</div>
+<div ng-view></div>
+<script type="text/ng-template" id="gallery.html">
+  <%= render partial: "images/gallery" %>
+</script>
+<script type="text/ng-template" id="slideshow.html">
+  <%= render partial: "images/gallery" %>
+</script>

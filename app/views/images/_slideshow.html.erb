@@ -1,3 +1,6 @@
-<div class="col-md-1 top-buffer">
-  slideshow
+<div class="col-md-1 top-buffer" ng-repeat="gallery in galleries">
+  <a href="#/images/{{gallery.id}}" class="thumbnail"><img ng-src={{gallery.thumbnail_path}} class="img-responsive img-thumbnail" /></a>
+</div>
+<div class="col-md-1 top-buffer" ng-repeat="image in images">
+  <a href="#/images/{{image.id}}" class="thumbnail"><img ng-src={{image.thumbnail_path}} class="img-responsive img-thumbnail" /></a>
 </div>
