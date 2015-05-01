@@ -3,6 +3,7 @@ Setup Instructions
 2. Run Pixomatix::ImageSync.new.populate_images
 3. Run Pixomatix::ImageSync.generate_thumbnails
 4. Run Pixomatix::ImageSync.generate_hdtv_images
+5. Run `bower install` in app root directory
 
 API
 /images.json => Array of galleries
