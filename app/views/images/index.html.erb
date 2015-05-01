@@ -1,13 +1,10 @@
 <%= render partial: 'shared/notice', locals: { notice: notice } %>
 <div class="row">
-  <% @images.each do |image| %>
-    <% next if image.children.count == 0 && image.images.count == 0 %>
-    <div class="col-md-1">
-      <% if image.images.first %>
-        <%= link_to image_tag(thumbnail_image_path(image.images.ordered.first.id), class: 'img-responsive img-thumbnail'), image, class: 'thumbnail' %>
-      <% else %>
-        <%= link_to image_tag('default_gallery_image_thumbnail.png', class: 'img-responsive img-thumbnail'), image, class: 'thumbnail' %>
-      <% end %>
-    </div>
-  <% end %>
+  <div ng-view></div>
+  <script type="text/ng-template" id="gallery.html">
+    <%= render partial: "images/gallery" %>
+  </script>
+  <script type="text/ng-template" id="slideshow.html">
+    <%= render partial: "images/slideshow" %>
+  </script>
 </div>

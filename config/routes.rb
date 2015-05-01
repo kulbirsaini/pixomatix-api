@@ -1,8 +1,13 @@
 Rails.application.routes.draw do
-  get '/images/:id/thumbnail' => 'images#stream', as: :thumbnail_image
-  get '/images/:id/original' => 'images#stream', as: :original_image, type: :original
-  get '/images/:id/hdtv' => 'images#stream', as: :hdtv_image, type: :hdtv
-  resources :images
+  resources :images do
+    member do
+      get :galleries
+      get :images
+      get :thumbnail
+      get :original
+      get :hdtv
+    end
+  end
   root 'images#index'
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".

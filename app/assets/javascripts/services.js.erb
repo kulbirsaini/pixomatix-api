@@ -1,0 +1,7 @@
+var galleryServices = angular.module("galleryServices", ['ngResource']);
+
+galleryServices.factory("Gallery", ["$resource",
+  function($resouce){
+    return $resouce("/images/:id.json");
+  }
+]);

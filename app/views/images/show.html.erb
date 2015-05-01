@@ -9,7 +9,7 @@
       <% elsif image.images.count > 0 %>
         <%= link_to image_tag(thumbnail_image_path(image.images.ordered.first.id), class: 'img-responsive img-thumbnail'), '', class: 'thumbnail', 'ng-click': "getImageData(#{image.id})", data: { toggle: 'modal', target: '#image-modal' } %>
       <% else %>
-        <%= link_to image_tag('default_gallery_image_thumbnail.png', class: 'img-responsive img-thumbnail'), image, class: 'thumbnail' %>
+        <%= link_to image_tag(thumbnail_image_path(image.get_random_image.id), class: 'img-responsive img-thumbnail'), image, class: 'thumbnail' %>
       <% end %>
     </div>
   <% end %>

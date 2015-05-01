@@ -1,5 +1,7 @@
 class ImagesController < ApplicationController
-  before_action :set_image, only: [:show, :stream]
+  include ImagesHelper
+
+  before_action :set_image, only: [:show, :galleries, :images]
 
   # GET /images
   # GET /images.json
@@ -13,26 +15,42 @@ class ImagesController < ApplicationController
     render 'show_image', layout: false && return if @image.image? && params.has_key?(:show)
   end
 
-  def stream
-    if @image.image?
-      if params[:show].present?
-        render 'show_image', layout: false
-        return
-      else
-        if params[:type] == :original
-          image_path = @image.original_path
-          image_path = File.join(Rails.root, 'app/assets/images/', 'default_gallery_image_original.png') unless File.exists?(image_path)
-        elsif params[:type] == :hdtv
-          image_path = @image.hdtv_path
-          image_path = @image.original_path unless File.exists?(image_path)
-          image_path = File.join(Rails.root, 'app/assets/images/', 'default_gallery_image_hdtv.png') unless File.exists?(image_path)
-        else
-          image_path = @image.thumbnail_path
-          image_path = File.join(Rails.root, 'app/assets/images/', 'default_gallery_image_thumbnail.png') unless File.exists?(image_path)
-        end
-        send_file image_path, type: @image.mime_type, disposition: 'inline'
-      end
+  def thumbnail
+    begin
+      @image = Image.find(params[:id])
+      image_path = @image.get_random_image.get_path(:thumbnail)
+    rescue
+      image_path = get_asset_path("default_gallery_image_thumbnail.png")
     end
+    send_file image_path, type: @image.try(:mime_type) || 'image/png', disposition: 'inline'
+  end
+
+  def hdtv
+    begin
+      @image = Image.find(params[:id])
+      image_path = @image.get_random_image.get_path(:hdtv)
+    rescue
+      image_path = get_asset_path("default_gallery_image_hdtv.png")
+    end
+    send_file image_path, type: @image.try(:mime_type) || 'image/png', disposition: 'inline'
+  end
+
+  def original
+    begin
+      @image = Image.find(params[:id])
+      image_path = @image.get_random_image.get_path(:original)
+    rescue
+      image_path = get_asset_path("default_gallery_image_original.png")
+    end
+    send_file image_path, type: @image.try(:mime_type) || 'image/png', disposition: 'inline'
+  end
+
+  def galleries
+    @galleries = @image.children
+  end
+
+  def images
+    @images = @image.images
   end
 
   private

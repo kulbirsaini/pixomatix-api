@@ -15,13 +15,34 @@
 //= require jquery_ujs
 //= require turbolinks
 //= require angular/angular
+//= require angular-route/angular-route
+//= require angular-resource/angular-resource
 //= require_tree .
 
 
-var imageGalleryApp = angular.module("ImageGalleryApp", [
-  'imageGalleryControllers',
+var galleryApp = angular.module("GalleryApp", [
+  'ngRoute',
+  'galleryControllers',
+  'galleryServices',
+]);
+
+galleryApp.config(['$routeProvider',
+  function($routeProvider) {
+    $routeProvider.
+    when('/images', {
+      templateUrl: 'gallery.html',
+      controller: 'GalleryCtrl'
+    }).
+    when('/images/:imageID', {
+      templateUrl: 'slideshow.html',
+      controller: 'GalleryCtrl'
+    }).
+    otherwise({
+      redirectTo: '/images'
+    });
+  }
 ]);
 
 jQuery(document).on('ready page:load', function(arguments) {
-  angular.bootstrap(document.body, ['ImageGalleryApp'])
+  angular.bootstrap(document.body, ['GalleryApp'])
 });

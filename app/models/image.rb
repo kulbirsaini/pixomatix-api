@@ -26,8 +26,28 @@ class Image < ActiveRecord::Base
     index ? parent.id.to_s : parent.path
   end
 
+  def root?
+    parent_id.nil?
+  end
+
   def image?
     !filename.nil?
+  end
+
+  def gallery?
+    filename.nil?
+  end
+
+  def has_images?
+    images.count > 0
+  end
+
+  def has_galleries?
+    children.count > 0
+  end
+
+  def has_parent?
+    parent_id.present?
   end
 
   def scale(width, height, filepath)
@@ -93,5 +113,33 @@ class Image < ActiveRecord::Base
     else
       File.join(self.directory_tree, self.path)
     end
+  end
+
+  def get_random_image
+    return self if image?
+    return images.first if images.count > 0
+    children.each do |child|
+      image = child.get_random_image
+      return image if image && image.image?
+    end
+    nil
+  end
+
+  def get_path(type)
+    return get_asset_path('default_gallery_image_thumbnail.png') if !image?
+    type = type.to_s
+    case type
+    when 'original'
+      return original_path if File.exists?(original_path)
+      return get_asset_path('default_gallery_image_original.png')
+    when 'hdtv'
+      return hdtv_path if File.exists?(hdtv_path)
+      return original_path if File.exists?(original_path)
+      return get_asset_path('default_gallery_image_hdtv.png')
+    when 'thumbnail'
+      return thumbnail_path if File.exists?(thumbnail_path)
+      return get_asset_path('default_gallery_image_thumbnail.png')
+    end
+    get_asset_path('default_gallery_image_thumbnail.png')
   end
 end

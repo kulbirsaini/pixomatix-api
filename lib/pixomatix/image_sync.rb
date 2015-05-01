@@ -133,7 +133,7 @@ module Pixomatix
         next unless self.class.is_image_extension?(filename)
         image = MiniMagick::Image.open(File.join(directory, filename))
         Image.where(filename: filename, width: image.width, height: image.height, size: image.size, parent: parent, mime_type: image.mime_type).first_or_create
-        puts "Added #{filepath}"
+        puts "Added #{filename} from #{directory}"
         image.destroy!
       end
       puts "Done with #{directory}!"
