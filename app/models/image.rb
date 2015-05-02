@@ -7,6 +7,10 @@ class Image < ActiveRecord::Base
   scope :images, -> { where.not(filename: nil) }
   scope :ordered, -> { order(:filename) }
 
+  after_create :update_parent
+  after_save :update_parent
+  after_destroy :update_parent
+
   def directory_tree(index = false)
     parents = []
     next_parent = parent
@@ -22,8 +26,13 @@ class Image < ActiveRecord::Base
   end
 
   def parent_directory(index = false)
-    return nil if parent.nil? || !parent.path.present?
-    index ? parent.id.to_s : parent.path
+    if index
+      return nil if parent_id.nil?
+      parent_id.to_s
+    else
+      return nil if !parent.path.present?
+      parent.path
+    end
   end
 
   def root?
@@ -38,14 +47,6 @@ class Image < ActiveRecord::Base
     filename.nil?
   end
 
-  def has_images?
-    images.count > 0
-  end
-
-  def has_galleries?
-    children.count > 0
-  end
-
   def has_parent?
     parent_id.present?
   end
@@ -57,24 +58,22 @@ class Image < ActiveRecord::Base
     image.scale!(width, height)
     image.write(filepath)
     image.destroy!
-    nil
+    true
   end
 
   def resize_to_hdtv(height, filepath)
     return nil if !image?
-    image = MiniMagick::Image.open(self.original_path)
-    if image.width >= image.height
-      if image.height <= height
-        image.destroy!
+    if self.width >= self.height
+      if self.height <= height
         return
       end
     else
-      if image.width <= height
-        image.destroy!
+      if self.width <= height
         return
       end
     end
 
+    image = MiniMagick::Image.open(self.original_path)
     FileUtils.mkdir_p(File.dirname(filepath))
     if image.width >= image.height
       image.rotate(90)
@@ -85,7 +84,7 @@ class Image < ActiveRecord::Base
     end
     image.write(filepath)
     image.destroy!
-    nil
+    true
   end
 
   def thumbnail_path
@@ -117,7 +116,7 @@ class Image < ActiveRecord::Base
 
   def get_random_image
     return self if image?
-    return images.first if images.count > 0
+    return images.first if images.first
     children.each do |child|
       image = child.get_random_image
       return image if image && image.image?
@@ -141,5 +140,12 @@ class Image < ActiveRecord::Base
       return get_asset_path('default_gallery_image_thumbnail.png')
     end
     get_asset_path('default_gallery_image_thumbnail.png')
+  end
+
+  private
+
+  def update_parent
+    return unless parent
+    parent.update(has_galleries: parent.children.count > 0, has_images: parent.images.count > 0)
   end
 end

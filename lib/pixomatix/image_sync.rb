@@ -11,8 +11,8 @@ module Pixomatix
       (images || Image.images).each do |image|
         filepath = image.thumbnail_path
         next if File.exists?(filepath)
-        image.scale(Rails.application.config.x.thumbnail_width, Rails.application.config.x.thumbnail_height, filepath)
-        puts "Generated thumbnail for #{image.original_path}"
+        result = image.scale(Rails.application.config.x.thumbnail_width, Rails.application.config.x.thumbnail_height, filepath)
+        puts "Generated thumbnail for #{image.original_path} at #{filepath}" if result
       end
       nil
     end
@@ -21,8 +21,8 @@ module Pixomatix
       (images || Image.images).each do |image|
         filepath = image.hdtv_path
         next if File.exists?(filepath)
-        image.resize_to_hdtv(Rails.application.config.x.hdtv_height, filepath)
-        puts "Generated HDTV image for #{image.original_path}"
+        result = image.resize_to_hdtv(Rails.application.config.x.hdtv_height, filepath)
+        puts "Generated HDTV image for #{image.original_path} at #{filepath}" if result
       end
       nil
     end
@@ -109,7 +109,7 @@ module Pixomatix
 
     def populate_images(directory = nil, parent = nil)
       if directory
-        parent = Image.where(path: directory, parent: parent).first_or_create
+        parent = Image.find_or_create_by(path: directory, parent: parent)
         popuplate_images_from_directory(directory, parent)
         directory = File.join(parent.directory_tree, directory) if parent
         self.class.get_sub_directories(directory).each do |sub_directory|
@@ -117,7 +117,7 @@ module Pixomatix
         end
       else
         @directories.each do |directory|
-          parent = Image.where(path: directory).first_or_create
+          parent = Image.find_or_create_by(path: directory)
           popuplate_images_from_directory(directory, parent)
           self.class.get_sub_directories(directory).each do |sub_directory|
             populate_images(sub_directory, parent)
@@ -126,17 +126,22 @@ module Pixomatix
       end
     end
 
-    def popuplate_images_from_directory(directory, parent)
+    def popuplate_images_from_directory(directory, parent, force_populate = false)
       directory = File.join(parent.directory_tree, directory) if parent
       puts "Populating images from #{directory} ..."
-      Dir.entries(directory).sort.map do |filename|
-        next unless self.class.is_image_extension?(filename)
+      images_in_dir = Dir.entries(directory)
+      images_in_db = force_populate ? [] : Image.where(parent: parent).where.not(filename: nil).select(:filename).collect(&:filename)
+      images_to_create = (images_in_dir - images_in_db).select{ |filename| self.class.is_image_extension?(filename) }
+      images_to_delete = images_in_db - images_in_dir
+      Image.where(filename: images_to_delete, parent: parent).destroy_all
+
+      images_to_create.each do |filename|
         image = MiniMagick::Image.open(File.join(directory, filename))
-        Image.where(filename: filename, width: image.width, height: image.height, size: image.size, parent: parent, mime_type: image.mime_type).first_or_create
+        Image.find_or_create_by(filename: filename, width: image.width, height: image.height, size: image.size, parent: parent, mime_type: image.mime_type)
         puts "Added #{filename} from #{directory}"
         image.destroy!
       end
-      puts "Done with #{directory}!"
+      puts "Done with #{directory}! Created: #{images_to_create.count}, Deleted: #{images_to_delete.count}"
     end
 
     def self.is_image_extension?(filename)

@@ -33,6 +33,7 @@ gem "font-awesome-rails"
 group :development, :test do
   # Use Unicorn as the app server
   gem 'unicorn'
+  gem 'thin'
 
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug'
