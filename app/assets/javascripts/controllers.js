@@ -47,11 +47,13 @@ galleryControllers.controller('SlideshowCtrl', ['$scope', '$routeParams', '$loca
       $scope.images = [];
       $scope.parent_id = null;
       $scope.currentIndex = 0;
+      $scope.currentAngle = 0;
     };
 
     $scope.resetCurrentGallery = function(){
       $scope.images = [];
       $scope.currentIndex = 0;
+      $scope.currentAngle = 0;
     };
 
     $scope.loadImages = function(){
@@ -61,6 +63,18 @@ galleryControllers.controller('SlideshowCtrl', ['$scope', '$routeParams', '$loca
 
     $scope.setParentId = function(){
       Gallery.getParentId({ operation: 'parent', id: $routeParams.id }, function(data){ $scope.parent_id = data.parent_id; });
+    };
+
+    $scope.rotateClockwise = function(){
+      $scope.currentAngle = ($scope.currentAngle + 90) % 360;
+    };
+
+    $scope.rotateAntiClockwise = function(){
+      $scope.currentAngle = ($scope.currentAngle - 90) % 360;
+    };
+
+    $scope.isOddAngleRotation = function(){
+      return ($scope.currentAngle % 90) / 2 !== 0;
     };
 
     $scope.getNextIndex = function(){
@@ -106,6 +120,8 @@ galleryControllers.controller('SlideshowCtrl', ['$scope', '$routeParams', '$loca
     $scope.$on('key.left', function(event){ $scope.previousImage(); });
     $scope.$on('key.right', function(event){ $scope.nextImage(); });
     $scope.$on('key.down', function(event){ $scope.lastImage(); });
+    $scope.$watch("currentAngle", function(value){ $scope.transformStyle = "rotate(" + $scope.currentAngle + "deg)"; });
+    $scope.$watch("currentIndex", function(value){ $scope.currentAngle = 0; });
 
     $scope.initializeData();
     $scope.loadImages();

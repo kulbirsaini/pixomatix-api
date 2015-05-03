@@ -20,17 +20,24 @@ div.top-buffer { margin-top: 20px; }
 img.img-center { margin: 0 auto; }
 
 .slideshow {
+  margin: 0px;
+  padding: 0px;
   display: flex;
   align-items: center;
   min-height: 100%;
   min-height: 100vh;
   background: #000;
-  margin-right: -15px;
-  margin-left: -15px;
 
   img {
     max-height: 100%;
     max-height: 100vh;
+  }
+
+  img.rotated-odd {
+    width: 100vh;
+  }
+
+  img.rotated-even {
   }
 
   .slideshow-overlay {

@@ -1,15 +1,22 @@
 <div class="slideshow">
-  <%= image_tag('', 'ng-src': "{{getCurrentImage().hdtv_path}}", 'ng-hide': '!getCurrentImage()', class: 'img-center img-responsive', data: { dismiss: 'modal' }) %>
+  <%= image_tag('',
+                'ng-src': "{{getCurrentImage().hdtv_path}}",
+                'ng-hide': '!getCurrentImage()',
+                'ng-class': '(currentAngle/90) % 2 === 0 ? "" : "rotated-odd"',
+                'ng-style': "{ transform: transformStyle, '-webkit-transform': transformStyle, '-ms-transform': transformStyle }",
+                class: 'img-center img-responsive', data: { dismiss: 'modal' }) %>
   <%= image_tag('', 'ng-src': "{{getImageAtIndex(currentIndex - 1).hdtv_path}}", 'ng-hide': 'true') %>
   <%= image_tag('', 'ng-src': "{{getImageAtIndex(currentIndex + 1).hdtv_path}}", 'ng-hide': 'true') %>
   <div class="slideshow-overlay" ng-swipe-left="nextImage()" ng-swipe-right="previousImage()">
     <div class="slideshow-controls">
       <div class="btn-group">
-        <%= button_tag('First', 'ng-click': 'firstImage();', class: 'btn btn-warning', 'ng-keypress': 'console.log($event);') %>
-        <%= button_tag('Previous', 'ng-click': 'previousImage();', class: 'btn btn-warning') %>
-        <%= link_to('Close', '#/images/{{parent_id}}', class: 'btn btn-success') %>
-        <%= button_tag('Next', 'ng-click': 'nextImage();', class: 'btn btn-warning') %>
-        <%= button_tag('Last', 'ng-click': 'lastImage();', class: 'btn btn-warning') %>
+        <%= button_tag('', 'ng-click': 'firstImage();', class: 'btn btn-warning'){ content_tag(:span, '', class: 'glyphicon glyphicon-fast-backward') } %>
+        <%= button_tag('', 'ng-click': 'previousImage();', class: 'btn btn-warning'){ content_tag(:span, '', class: 'glyphicon glyphicon-backward') } %>
+        <%= button_tag('Anti', 'ng-click': 'rotateAntiClockwise()', class: 'btn btn-warning'){ content_tag(:span, '', class: 'glyphicon glyphicon-repeat', style: 'transform: scale(-1,1);') } %>
+        <%= link_to(content_tag(:span, '', class: 'glyphicon glyphicon-remove-circle'), '#/images/{{parent_id}}', class: 'btn btn-success') %>
+        <%= button_tag('', 'ng-click': 'rotateClockwise()', class: 'btn btn-warning'){ content_tag(:span, '', class: 'glyphicon glyphicon-repeat') } %>
+        <%= button_tag('', 'ng-click': 'nextImage();', class: 'btn btn-warning'){ content_tag(:span, '', class: 'glyphicon glyphicon-forward') } %>
+        <%= button_tag('', 'ng-click': 'lastImage();', class: 'btn btn-warning'){ content_tag(:span, '', class: 'glyphicon glyphicon-fast-forward') } %>
       </div>
     </div>
   </div>

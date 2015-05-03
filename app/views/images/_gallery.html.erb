@@ -1,11 +1,13 @@
-<div class="row">
-  <div class="col-md-1 top-buffer" ng-repeat="gallery in galleries">
-    <a ng-if="gallery.has_galleries == false" href="#/images/{{gallery.id}}/slideshow" class="thumbnail"><img ng-src={{gallery.thumbnail_path}} class="img-responsive img-thumbnail" /></a>
-    <a ng-if="gallery.has_galleries == true" href="#/images/{{gallery.id}}" class="thumbnail"><img ng-src={{gallery.thumbnail_path}} class="img-responsive img-thumbnail" /></a>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-1 top-buffer" ng-repeat="gallery in galleries">
+      <a ng-if="gallery.has_galleries == false" href="#/images/{{gallery.id}}/slideshow" class="thumbnail"><img ng-src={{gallery.thumbnail_path}} class="img-responsive img-thumbnail" /></a>
+      <a ng-if="gallery.has_galleries == true" href="#/images/{{gallery.id}}" class="thumbnail"><img ng-src={{gallery.thumbnail_path}} class="img-responsive img-thumbnail" /></a>
+    </div>
   </div>
-</div>
-<div class="row" ng-hide="parent_id === null">
-  <div class="col-md-12 text-center">
-    <a href="#/images/{{parent_id}}" class='btn btn-default'>Back</a>
+  <div class="row" ng-hide="parent_id === null">
+    <div class="col-md-12 text-center">
+      <a href="#/images/{{parent_id}}" class='btn btn-default'>Back</a>
+    </div>
   </div>
 </div>
