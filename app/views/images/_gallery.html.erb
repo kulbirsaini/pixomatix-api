@@ -1,35 +1,11 @@
 <div class="row">
   <div class="col-md-1 top-buffer" ng-repeat="gallery in galleries">
-    <a ng-if="gallery.has_galleries == false" ng-click="loadImagesForGallery(gallery.id)" href="" class="thumbnail" data-toggle="modal" data-target="#image-modal"><img ng-src={{gallery.thumbnail_path}} class="img-responsive img-thumbnail" /></a>
+    <a ng-if="gallery.has_galleries == false" href="#/images/{{gallery.id}}/slideshow" class="thumbnail"><img ng-src={{gallery.thumbnail_path}} class="img-responsive img-thumbnail" /></a>
     <a ng-if="gallery.has_galleries == true" href="#/images/{{gallery.id}}" class="thumbnail"><img ng-src={{gallery.thumbnail_path}} class="img-responsive img-thumbnail" /></a>
   </div>
 </div>
-<div class="row">
+<div class="row" ng-hide="parent_id === null">
   <div class="col-md-12 text-center">
     <a href="#/images/{{parent_id}}" class='btn btn-default'>Back</a>
   </div>
 </div>
-<div class="modal fade in" id="image-modal">
-  <div class="modal-dialog modal-custom">
-    <div class="modal-content">
-      <div class="modal-body">
-        <div class="slideshow">
-          <%= image_tag('', 'ng-src': "{{getCurrentImage().hdtv_path}}", 'ng-hide': '!getCurrentImage()', class: 'img-center img-responsive', data: { dismiss: 'modal' }) %>
-          <%= image_tag('', 'ng-src': "{{getImageAtIndex(currentIndex - 1).hdtv_path}}", 'ng-hide': 'true') %>
-          <%= image_tag('', 'ng-src': "{{getImageAtIndex(currentIndex + 1).hdtv_path}}", 'ng-hide': 'true') %>
-          <div class="slideshow-overlay" ng-swipe-left="nextImage()" ng-swipe-right="previousImage()">
-            <div class="slideshow-controls">
-              <div class="btn-group">
-                <%= button_tag('First', 'ng-click': 'firstImage();', class: 'btn btn-warning', 'ng-keypress': 'console.log($event);') %>
-                <%= button_tag('Previous', 'ng-click': 'previousImage();', class: 'btn btn-warning') %>
-                <%= button_tag('Close', class: 'btn btn-success', data: { dismiss: 'modal' }) %>
-                <%= button_tag('Next', 'ng-click': 'nextImage();', class: 'btn btn-warning') %>
-                <%= button_tag('Last', 'ng-click': 'lastImage();', class: 'btn btn-warning') %>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div><!-- /.modal-content -->
-  </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->

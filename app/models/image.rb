@@ -51,6 +51,11 @@ class Image < ActiveRecord::Base
     parent_id.present?
   end
 
+  def parent_with_galleries
+    return self if has_galleries?
+    return parent.parent_with_galleries if parent
+  end
+
   def scale(width, height, filepath)
     return nil if !image?
     FileUtils.mkdir_p(File.dirname(filepath))

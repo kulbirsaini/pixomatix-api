@@ -1,7 +1,7 @@
 class ImagesController < ApplicationController
   include ImagesHelper
 
-  before_action :set_image, only: [:show, :galleries, :images]
+  before_action :set_image, only: [:show, :galleries, :images, :parent]
 
   # GET /images
   # GET /images.json
@@ -51,6 +51,10 @@ class ImagesController < ApplicationController
 
   def images
     @images = @image.images
+  end
+
+  def parent
+    @parent = @image.parent_with_galleries
   end
 
   private

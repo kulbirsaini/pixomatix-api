@@ -1,9 +1,49 @@
 var galleryControllers = angular.module("galleryControllers", []);
 
-galleryControllers.controller('GalleryCtrl', ['$scope', '$http', '$window', '$routeParams', '$filter', 'Gallery',
-  function($scope, $http, $window, $routeParams, $filter, Gallery){
+galleryControllers.controller('GalleryCtrl', ['$scope', '$routeParams', '$filter', 'Gallery',
+  function($scope, $routeParams, $filter, Gallery){
     $scope.initializeData = function(){
       $scope.galleries = [];
+      $scope.parent_id = null;
+    };
+
+    $scope.filterEmptyGalleries = function(galleries){
+      return $filter('filter')(galleries, function(item){ return item.has_galleries || item.has_images; });
+    };
+
+    $scope.appendToGalleries = function(galleries){
+      galleries = $scope.filterEmptyGalleries(galleries);
+      $scope.galleries = $scope.galleries.concat(galleries);
+    };
+
+    $scope.handleData = function(data){
+      console.log('id: ', $routeParams.id, ' data: ', data, ' constructor: ', data.constructor === Array);
+      $scope.initializeData();
+      if (data.constructor === Array){
+        $scope.appendToGalleries(data);
+      } else {
+        $scope.parent_id = data.parent_id;
+        if (data.has_galleries){
+          Gallery.getCollection({operation: 'galleries', id: data.id}, $scope.appendToGalleries);
+        }
+        if (data.has_images){
+          $scope.galleries = $scope.galleries.concat({id:data.id,is_image:false,is_gallery:true,has_galleries:false,has_images:true,has_parent:true,parent_id:data.id,thumbnail_path:data.thumbnail_path});
+        }
+      }
+    };
+
+    $scope.initializeData();
+    if (typeof($routeParams.id) == "undefined"){
+      Gallery.query($scope.handleData);
+    } else {
+      Gallery.get({id: $routeParams.id}, $scope.handleData);
+    }
+  }
+]);
+
+galleryControllers.controller('SlideshowCtrl', ['$scope', '$routeParams', '$location', 'Gallery',
+  function($scope, $routeParams, $location, Gallery){
+    $scope.initializeData = function(){
       $scope.images = [];
       $scope.parent_id = null;
       $scope.currentIndex = 0;
@@ -14,9 +54,13 @@ galleryControllers.controller('GalleryCtrl', ['$scope', '$http', '$window', '$ro
       $scope.currentIndex = 0;
     };
 
-    $scope.loadImagesForGallery = function(id){
+    $scope.loadImages = function(){
       $scope.resetCurrentGallery();
-      Gallery.getCollection({operation: 'images', id: id }, $scope.appendToImages);
+      Gallery.getCollection({operation: 'images', id: $routeParams.id }, $scope.appendToImages);
+    };
+
+    $scope.setParentId = function(){
+      Gallery.getParentId({ operation: 'parent', id: $routeParams.id }, function(data){ $scope.parent_id = data.parent_id; });
     };
 
     $scope.getNextIndex = function(){
@@ -52,49 +96,19 @@ galleryControllers.controller('GalleryCtrl', ['$scope', '$http', '$window', '$ro
       $scope.currentIndex = $scope.images.length - 1;
     };
 
-    $scope.filterEmptyGalleries = function(galleries){
-      return $filter('filter')(galleries, function(item){ return item.has_galleries || item.has_images; });
-    };
-
-    $scope.appendToGalleries = function(galleries){
-      galleries = $scope.filterEmptyGalleries(galleries);
-      console.log('Galleries: ', galleries);
-      $scope.galleries = $scope.galleries.concat(galleries);
-    };
-
     $scope.appendToImages = function(images){
-      console.log('Images: ', images);
       $scope.images = $scope.images.concat(images);
     };
 
-    $scope.handleData = function(data){
-      console.log('id: ', $routeParams.id, ' data: ', data, ' constructor: ', data.constructor === Array);
-      $scope.initializeData();
-      if (data.constructor === Array){
-        $scope.appendToGalleries(data);
-      } else {
-        $scope.parent_id = data.parent_id;
-        if (data.has_galleries){
-          Gallery.getCollection({operation: 'galleries', id: data.id}, $scope.appendToGalleries);
-        }
-        if (data.has_images){
-          $scope.galleries = $scope.galleries.concat({id:data.id,is_image:false,is_gallery:true,has_galleries:false,has_images:true,has_parent:true,parent_id:data.id,thumbnail_path:data.thumbnail_path});
-        }
-      }
-    };
-
-    $scope.$on('keydown', function(msg, code){
-      if (code == 38){ $scope.firstImage(); $scope.$apply(); }
-      if (code == 37){ $scope.previousImage(); $scope.$apply(); }
-      if (code == 39){ $scope.nextImage(); $scope.$apply(); }
-      if (code == 40){ $scope.lastImage(); $scope.$apply(); }
-    });
+    //Handle Keypress
+    $scope.$on('key.escape', function(event){ $location.path('/images/' + $scope.parent_id); });
+    $scope.$on('key.up', function(event){ $scope.firstImage(); });
+    $scope.$on('key.left', function(event){ $scope.previousImage(); });
+    $scope.$on('key.right', function(event){ $scope.nextImage(); });
+    $scope.$on('key.down', function(event){ $scope.lastImage(); });
 
     $scope.initializeData();
-    if (typeof($routeParams.id) == "undefined"){
-      Gallery.query($scope.handleData);
-    } else {
-      Gallery.get({id: $routeParams.id}, $scope.handleData);
-    }
+    $scope.loadImages();
+    $scope.setParentId();
   }
 ]);

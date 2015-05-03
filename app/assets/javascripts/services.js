@@ -11,6 +11,10 @@ galleryServices.factory("Gallery", ["$resource", "$routeParams",
       return this.query({ operation: params.operation, id: params.id }, success, failure);
     };
 
+    resource.getParentId = function(params, success, failure){
+      return this.get({ operation: params.operation, id: params.id }, success, failure);
+    };
+
     return resource;
   }
 ]);

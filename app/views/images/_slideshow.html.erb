@@ -1,6 +1,16 @@
-<div class="col-md-1 top-buffer" ng-repeat="gallery in galleries">
-  <a href="#/images/{{gallery.id}}" class="thumbnail"><img ng-src={{gallery.thumbnail_path}} class="img-responsive img-thumbnail" /></a>
-</div>
-<div class="col-md-1 top-buffer" ng-repeat="image in images">
-  <a href="#/images/{{image.id}}" class="thumbnail"><img ng-src={{image.thumbnail_path}} class="img-responsive img-thumbnail" /></a>
+<div class="slideshow">
+  <%= image_tag('', 'ng-src': "{{getCurrentImage().hdtv_path}}", 'ng-hide': '!getCurrentImage()', class: 'img-center img-responsive', data: { dismiss: 'modal' }) %>
+  <%= image_tag('', 'ng-src': "{{getImageAtIndex(currentIndex - 1).hdtv_path}}", 'ng-hide': 'true') %>
+  <%= image_tag('', 'ng-src': "{{getImageAtIndex(currentIndex + 1).hdtv_path}}", 'ng-hide': 'true') %>
+  <div class="slideshow-overlay" ng-swipe-left="nextImage()" ng-swipe-right="previousImage()">
+    <div class="slideshow-controls">
+      <div class="btn-group">
+        <%= button_tag('First', 'ng-click': 'firstImage();', class: 'btn btn-warning', 'ng-keypress': 'console.log($event);') %>
+        <%= button_tag('Previous', 'ng-click': 'previousImage();', class: 'btn btn-warning') %>
+        <%= link_to('Close', '#/images/{{parent_id}}', class: 'btn btn-success') %>
+        <%= button_tag('Next', 'ng-click': 'nextImage();', class: 'btn btn-warning') %>
+        <%= button_tag('Last', 'ng-click': 'lastImage();', class: 'btn btn-warning') %>
+      </div>
+    </div>
+  </div>
 </div>
