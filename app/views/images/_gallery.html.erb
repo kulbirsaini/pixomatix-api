@@ -14,7 +14,9 @@
     <div class="modal-content">
       <div class="modal-body">
         <div class="slideshow">
-          <%= image_tag('', 'ng-src': "{{currentImage().original_path}}", 'ng-hide': '!currentImage()', class: 'img-center img-responsive', data: { dismiss: 'modal' }) %>
+          <%= image_tag('', 'ng-src': "{{getCurrentImage().hdtv_path}}", 'ng-hide': '!getCurrentImage()', class: 'img-center img-responsive', data: { dismiss: 'modal' }) %>
+          <%= image_tag('', 'ng-src': "{{getImageAtIndex(currentIndex - 1).hdtv_path}}", 'ng-hide': 'true') %>
+          <%= image_tag('', 'ng-src': "{{getImageAtIndex(currentIndex + 1).hdtv_path}}", 'ng-hide': 'true') %>
           <div class="slideshow-overlay" ng-swipe-left="nextImage()" ng-swipe-right="previousImage()">
             <div class="slideshow-controls">
               <div class="btn-group">
@@ -31,10 +33,3 @@
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
-<script type="text/javascript">
-  jQuery(document).ready(function(){
-    jQuery('#image-modal').on('hidden.bs.modal', function(e){
-      jQuery('#image-modal .modal-body img.picture-frame').attr('src', '').attr('ng-src', '');
-    });
-  });
-</script>

@@ -19,19 +19,29 @@ galleryControllers.controller('GalleryCtrl', ['$scope', '$http', '$window', '$ro
       Gallery.getCollection({operation: 'images', id: id }, $scope.appendToImages);
     };
 
-    $scope.currentImage = function(){
-      if ($scope.images.length === 0 || $scope.currentIndex < 0 || $scope.currentIndex > $scope.images.length - 1 ){ return null; }
-      return $scope.images[$scope.currentIndex];
-    }
+    $scope.getNextIndex = function(){
+      return ($scope.currentIndex === $scope.images.length - 1) ? $scope.currentIndex : $scope.currentIndex + 1;
+    };
+
+    $scope.getPreviousIndex = function(){
+      return ($scope.currentIndex === 0) ? $scope.currentIndex : $scope.currentIndex - 1;
+    };
+
+    $scope.getImageAtIndex = function(index){
+      var image = $scope.images[index];
+      return (typeof(image) == "undefined") ? null : image;
+    };
+
+    $scope.getCurrentImage = function(){
+      return $scope.getImageAtIndex($scope.currentIndex);
+    };
 
     $scope.nextImage = function(){
-      if ($scope.currentIndex === $scope.images.length - 1){ return; }
-      $scope.currentIndex +=1;
+      $scope.currentIndex = $scope.getNextIndex();
     };
 
     $scope.previousImage = function(){
-      if ($scope.currentIndex === 0){ return; }
-      $scope.currentIndex -= 1;
+      $scope.currentIndex = $scope.getPreviousIndex();
     };
 
     $scope.firstImage = function(){
@@ -61,7 +71,7 @@ galleryControllers.controller('GalleryCtrl', ['$scope', '$http', '$window', '$ro
       console.log('id: ', $routeParams.id, ' data: ', data, ' constructor: ', data.constructor === Array);
       $scope.initializeData();
       if (data.constructor === Array){
-        $scope.galleries = $scope.filterEmptyGalleries(data);
+        $scope.appendToGalleries(data);
       } else {
         $scope.parent_id = data.parent_id;
         if (data.has_galleries){
@@ -74,7 +84,7 @@ galleryControllers.controller('GalleryCtrl', ['$scope', '$http', '$window', '$ro
     };
 
     $scope.$on('keydown', function(msg, code){
-      if (code == 38){ console.log('test'); $scope.firstImage(); $scope.$apply(); }
+      if (code == 38){ $scope.firstImage(); $scope.$apply(); }
       if (code == 37){ $scope.previousImage(); $scope.$apply(); }
       if (code == 39){ $scope.nextImage(); $scope.$apply(); }
       if (code == 40){ $scope.lastImage(); $scope.$apply(); }

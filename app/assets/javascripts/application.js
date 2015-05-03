@@ -47,7 +47,7 @@ galleryApp.config(['$routeProvider',
 
 galleryApp.directive('keyTrap', function(){
   return function(scope, element){
-    elem.bind('keydown', function(event){
+    element.bind('keydown', function(event){
       scope.$broadcast('keydown', event.keyCode );
     });
   };
