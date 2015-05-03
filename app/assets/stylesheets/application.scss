@@ -36,4 +36,22 @@
 }
 .hidden { display: none; }
 .modal-custom { width: 100%; height: 100%; margin: 0 auto; }
+.modal-custom .modal-content { border: 0px; text-align: center; background: none; }
 .modal-body { padding: 0px; }
+.modal-backdrop.in { opacity: 1; }
+
+.slideshow-overlay {
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  opacity: 0.5;
+  width: 100%;
+  height: 100%;
+  position: fixed;
+}
+
+.slideshow:hover .slideshow-overlay { opacity: 1; }
+.slideshow img { max-height: 100vh; }
+.slideshow-controls { position: fixed; bottom: 0px; text-align: center; width: 100%; }
+.slideshow { display: flex; align-items: center; min-height: 100%; min-height: 100vh; }

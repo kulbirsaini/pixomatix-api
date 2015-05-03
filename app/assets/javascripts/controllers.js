@@ -6,12 +6,12 @@ galleryControllers.controller('GalleryCtrl', ['$scope', '$http', '$window', '$ro
       $scope.galleries = [];
       $scope.images = [];
       $scope.parent_id = null;
-      $scope.current_index = 0;
+      $scope.currentIndex = 0;
     };
 
     $scope.resetCurrentGallery = function(){
       $scope.images = [];
-      $scope.current_index = 0;
+      $scope.currentIndex = 0;
     };
 
     $scope.loadImagesForGallery = function(id){
@@ -19,20 +19,27 @@ galleryControllers.controller('GalleryCtrl', ['$scope', '$http', '$window', '$ro
       Gallery.getCollection({operation: 'images', id: id }, $scope.appendToImages);
     };
 
+    $scope.currentImage = function(){
+      if ($scope.images.length === 0 || $scope.currentIndex < 0 || $scope.currentIndex > $scope.images.length - 1 ){ return null; }
+      return $scope.images[$scope.currentIndex];
+    }
+
     $scope.nextImage = function(){
-      if ($scope.current_index + 1 < $scope.images.length){ $scope.current_index +=1; }
+      if ($scope.currentIndex === $scope.images.length - 1){ return; }
+      $scope.currentIndex +=1;
     };
 
     $scope.previousImage = function(){
-      if ($scope.current_index - 1 >= 0) { $scope.current_index -= 1; }
+      if ($scope.currentIndex === 0){ return; }
+      $scope.currentIndex -= 1;
     };
 
     $scope.firstImage = function(){
-      $scope.current_index = 0;
+      $scope.currentIndex = 0;
     };
 
     $scope.lastImage = function(){
-      $scope.current_index = $scope.images.length - 1;
+      $scope.currentIndex = $scope.images.length - 1;
     };
 
     $scope.filterEmptyGalleries = function(galleries){
@@ -65,6 +72,13 @@ galleryControllers.controller('GalleryCtrl', ['$scope', '$http', '$window', '$ro
         }
       }
     };
+
+    $scope.$on('keydown', function(msg, code){
+      if (code == 38){ console.log('test'); $scope.firstImage(); $scope.$apply(); }
+      if (code == 37){ $scope.previousImage(); $scope.$apply(); }
+      if (code == 39){ $scope.nextImage(); $scope.$apply(); }
+      if (code == 40){ $scope.lastImage(); $scope.$apply(); }
+    });
 
     $scope.initializeData();
     if (typeof($routeParams.id) == "undefined"){

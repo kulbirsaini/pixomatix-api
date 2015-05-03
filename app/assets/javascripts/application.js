@@ -17,17 +17,19 @@
 //= require angular/angular
 //= require angular-route/angular-route
 //= require angular-resource/angular-resource
+//= require angular-touch/angular-touch
 //= require_tree .
 
 
 var galleryApp = angular.module("GalleryApp", [
   'ngRoute',
+  'ngTouch',
   'galleryControllers',
   'galleryServices',
 ]);
 
 galleryApp.config(['$routeProvider',
-  function($routeProvider) {
+  function($routeProvider){
     $routeProvider.
     when('/images', {
       templateUrl: 'gallery.html',
@@ -43,6 +45,14 @@ galleryApp.config(['$routeProvider',
   }
 ]);
 
-jQuery(document).on('ready page:load', function(arguments) {
+galleryApp.directive('keyTrap', function(){
+  return function(scope, element){
+    elem.bind('keydown', function(event){
+      scope.$broadcast('keydown', event.keyCode );
+    });
+  };
+});
+
+jQuery(document).on('ready page:load', function(arguments){
   angular.bootstrap(document.body, ['GalleryApp'])
 });

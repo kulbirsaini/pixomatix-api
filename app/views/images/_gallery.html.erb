@@ -12,13 +12,21 @@
 <div class="modal fade in" id="image-modal">
   <div class="modal-dialog modal-custom">
     <div class="modal-content">
-      <div class="modal-body text-center img-verticle-align">
-        <%= button_tag('Previous', 'ng-click': 'previousImage();', class: 'btn btn-warning previous') %>
-        <%= button_tag('First', 'ng-click': 'firstImage();', class: 'btn btn-warning first') %>
-        <%= image_tag('', 'ng-src': "{{images[current_index].hdtv_path}}", class: 'img-responsive img-center picture-frame', data: { dismiss: 'modal' }) %>
-        <%= button_tag('Next', 'ng-click': 'nextImage();', class: 'btn btn-warning next') %>
-        <%= button_tag('Last', 'ng-click': 'lastImage();', class: 'btn btn-warning last') %>
-        <%= link_to 'Close', '', class: 'btn btn-success back', data: { dismiss: 'modal' } %>
+      <div class="modal-body">
+        <div class="slideshow">
+          <%= image_tag('', 'ng-src': "{{currentImage().original_path}}", 'ng-hide': '!currentImage()', class: 'img-center img-responsive', data: { dismiss: 'modal' }) %>
+          <div class="slideshow-overlay" ng-swipe-left="nextImage()" ng-swipe-right="previousImage()">
+            <div class="slideshow-controls">
+              <div class="btn-group">
+                <%= button_tag('First', 'ng-click': 'firstImage();', class: 'btn btn-warning', 'ng-keypress': 'console.log($event);') %>
+                <%= button_tag('Previous', 'ng-click': 'previousImage();', class: 'btn btn-warning') %>
+                <%= button_tag('Close', class: 'btn btn-success', data: { dismiss: 'modal' }) %>
+                <%= button_tag('Next', 'ng-click': 'nextImage();', class: 'btn btn-warning') %>
+                <%= button_tag('Last', 'ng-click': 'lastImage();', class: 'btn btn-warning') %>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
