@@ -43,26 +43,23 @@ galleryControllers.controller('GalleryCtrl', ['$scope', '$routeParams', '$filter
 
 galleryControllers.controller('SlideshowCtrl', ['$scope', '$routeParams', '$location', 'Gallery',
   function($scope, $routeParams, $location, Gallery){
+    if (typeof($routeParams.image_id) == "undefined"){
+      Gallery.getObject({ operation: 'image', id: $routeParams.id }, function(data){
+        $location.path('/images/' + $routeParams.id + '/slideshow/' + data.id);
+      });
+    }
+  }
+]);
+
+galleryControllers.controller('SlideshowNavigationCtrl', ['$scope', '$routeParams', '$location', 'Gallery', 'ImageService',
+  function($scope, $routeParams, $location, Gallery, ImageService){
     $scope.initializeData = function(){
-      $scope.images = [];
+      $scope.gallery_id = $routeParams.id;
+      $scope.image_id = $routeParams.image_id;
       $scope.parent_id = null;
       $scope.currentIndex = 0;
       $scope.currentAngle = 0;
-    };
-
-    $scope.resetCurrentGallery = function(){
       $scope.images = [];
-      $scope.currentIndex = 0;
-      $scope.currentAngle = 0;
-    };
-
-    $scope.loadImages = function(){
-      $scope.resetCurrentGallery();
-      Gallery.getCollection({operation: 'images', id: $routeParams.id }, $scope.appendToImages);
-    };
-
-    $scope.setParentId = function(){
-      Gallery.getParentId({ operation: 'parent', id: $routeParams.id }, function(data){ $scope.parent_id = data.parent_id; });
     };
 
     $scope.rotateClockwise = function(){
@@ -74,7 +71,7 @@ galleryControllers.controller('SlideshowCtrl', ['$scope', '$routeParams', '$loca
     };
 
     $scope.isOddAngleRotation = function(){
-      return ($scope.currentAngle % 90) / 2 !== 0;
+      return ($scope.currentAngle / 90) % 2 !== 0;
     };
 
     $scope.getNextIndex = function(){
@@ -98,24 +95,53 @@ galleryControllers.controller('SlideshowCtrl', ['$scope', '$routeParams', '$loca
       $scope.currentIndex = $scope.getNextIndex();
     };
 
+    $scope.getNextImage = function(){
+      return $scope.getImageAtIndex($scope.getNextIndex());
+    };
+
     $scope.previousImage = function(){
       $scope.currentIndex = $scope.getPreviousIndex();
+    };
+
+    $scope.getPreviousImage = function(){
+      return $scope.getImageAtIndex($scope.getPreviousIndex());
     };
 
     $scope.firstImage = function(){
       $scope.currentIndex = 0;
     };
 
+    $scope.getFirstImage = function(){
+      return $scope.images[0];
+    };
+
     $scope.lastImage = function(){
       $scope.currentIndex = $scope.images.length - 1;
     };
 
+    $scope.getLastImage = function(){
+      return $scope.getImageAtIndex($scope.images.length - 1);
+    };
+
+    $scope.setIndexByImageId = function(image_id){
+      angular.forEach($scope.images, function(value, key){
+        if (value.id == image_id){ $scope.currentIndex = key; return; }
+      });
+    };
+
     $scope.appendToImages = function(images){
-      $scope.images = $scope.images.concat(images);
+      ImageService.setImages(images);
+      $scope.images = images;
+      $scope.setIndexByImageId($scope.image_id);
+    };
+
+    $scope.redirectToParentGallery = function(){
+      ImageService.resetData();
+      $location.path('/images/' + $scope.parent_id);
     };
 
     //Handle Keypress
-    $scope.$on('key.escape', function(event){ $location.path('/images/' + $scope.parent_id); });
+    $scope.$on('key.escape', function(event){ $scope.redirectToParentGallery(); });
     $scope.$on('key.up', function(event){ $scope.firstImage(); });
     $scope.$on('key.left', function(event){ $scope.previousImage(); });
     $scope.$on('key.right', function(event){ $scope.nextImage(); });
@@ -124,7 +150,15 @@ galleryControllers.controller('SlideshowCtrl', ['$scope', '$routeParams', '$loca
     $scope.$watch("currentIndex", function(value){ $scope.currentAngle = 0; });
 
     $scope.initializeData();
-    $scope.loadImages();
-    $scope.setParentId();
+    if (ImageService.getImages().length === 0){
+      console.log("Fetching!");
+      Gallery.getObject({ operation: 'parent', id: $scope.gallery_id }, function(data){ $scope.parent_id = data.parent_id; ImageService.setParentId(data.parent_id); });
+      Gallery.getCollection({ operation: 'images', id: $scope.gallery_id }, $scope.appendToImages)
+    } else {
+      console.log("Cached!");
+      $scope.parent_id = ImageService.getParentId();
+      $scope.images = ImageService.getImages();
+      $scope.setIndexByImageId($scope.image_id);
+    }
   }
 ]);

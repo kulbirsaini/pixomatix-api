@@ -3,6 +3,7 @@ Rails.application.routes.draw do
     member do
       get :galleries
       get :images
+      get :image
       get :thumbnail
       get :original
       get :hdtv
