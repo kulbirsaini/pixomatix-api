@@ -60,6 +60,7 @@ galleryControllers.controller('SlideshowNavigationCtrl', ['$scope', '$routeParam
       $scope.currentIndex = 0;
       $scope.currentAngle = 0;
       $scope.images = [];
+      $scope.quality = 'hdtv_path';
     };
 
     $scope.rotateClockwise = function(){

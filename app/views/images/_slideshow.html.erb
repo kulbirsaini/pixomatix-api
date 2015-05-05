@@ -1,19 +1,37 @@
 <div class="slideshow">
   <%= image_tag('',
-                'ng-src': "{{getCurrentImage().hdtv_path}}",
+                'ng-src': "{{getCurrentImage()[quality]}}",
                 'ng-hide': '!getCurrentImage()',
                 'ng-class': 'isOddAngleRotation() ? "rotated-odd" : ""',
                 'ng-style': "{ transform: transformStyle, '-webkit-transform': transformStyle, '-ms-transform': transformStyle }",
                 class: 'img-center img-responsive', data: { dismiss: 'modal' }) %>
-  <%= image_tag('', 'ng-src': "{{getPreviousImage().hdtv_path}}", 'ng-hide': 'true') %>
-  <%= image_tag('', 'ng-src': "{{getNextImage().hdtv_path}}", 'ng-hide': 'true') %>
+  <%= image_tag('', 'ng-src': "{{getPreviousImage()[quality]}}", 'ng-hide': 'true') %>
+  <%= image_tag('', 'ng-src': "{{getNextImage()[quality]}}", 'ng-hide': 'true') %>
   <div class="slideshow-overlay" ng-swipe-left="nextImage()" ng-swipe-right="previousImage()">
     <div class="slideshow-controls">
-      <div class="btn-group">
+      <div class="btn-group" role="group">
         <%= link_to(content_tag(:span, '', class: 'glyphicon glyphicon-fast-backward'), '#/images/{{gallery_id}}/slideshow/{{getFirstImage().id}}', class: 'btn btn-warning') %>
         <%= link_to(content_tag(:span, '', class: 'glyphicon glyphicon-backward'), '#/images/{{gallery_id}}/slideshow/{{getPreviousImage().id}}', class: 'btn btn-warning') %>
         <%= button_tag('', 'ng-click': 'rotateAntiClockwise()', class: 'btn btn-warning'){ content_tag(:span, '', class: 'glyphicon glyphicon-repeat', style: 'transform: scale(-1,1);') } %>
         <%= button_tag('', 'ng-click': 'redirectToParentGallery()', class: 'btn btn-warning'){ content_tag(:span, '', class: 'glyphicon glyphicon-remove-circle') } %>
+        <div class="btn-group dropup" role="group">
+          <button type="button" id="settings-menu" class="btn btn-warning dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+            <span class="glyphicon glyphicon-cog"></span>
+          </button>
+          <ul class="dropdown-menu dropdown-menu-left dropdown-settings-menu" role="menu" aria-labelledby="settings-menu">
+            <li>
+            <form class="form-inline">
+              <div class="form-group">
+                <select class="form-control input-sm" ng-model="quality">
+                  <option value="thumbnail_path">Thumbnail</option>
+                  <option value="hdtv_path">HDTV</option>
+                  <option value="original_path">Original</option>
+                </select>
+              </div>
+            </form>
+            </li>
+          </ul>
+        </div>
         <%= button_tag('', 'ng-click': 'rotateClockwise()', class: 'btn btn-warning'){ content_tag(:span, '', class: 'glyphicon glyphicon-repeat') } %>
         <%= link_to(content_tag(:span, '', class: 'glyphicon glyphicon-forward'), '#/images/{{gallery_id}}/slideshow/{{getNextImage().id}}', class: 'btn btn-warning') %>
         <%= link_to(content_tag(:span, '', class: 'glyphicon glyphicon-fast-forward'), '#/images/{{gallery_id}}/slideshow/{{getLastImage().id}}', class: 'btn btn-warning') %>

@@ -55,6 +55,11 @@ img.img-center { margin: 0 auto; }
       position: fixed;
       bottom: 0px;
       width: 100%;
+
+      ul.dropdown-settings-menu {
+        padding: 0px;
+        min-width: 0px;
+      }
     }
   }
 }
