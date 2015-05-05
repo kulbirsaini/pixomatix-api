@@ -8,6 +8,8 @@ class CreateImages < ActiveRecord::Migration
       t.integer :height
       t.integer :size
       t.string :mime_type
+      t.boolean :has_galleries, default: false
+      t.boolean :has_images, default: false
 
       t.timestamps null: false
     end
