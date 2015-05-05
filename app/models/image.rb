@@ -5,7 +5,7 @@ class Image < ActiveRecord::Base
 
   scope :root, -> { where(parent_id: nil) }
   scope :images, -> { where.not(filename: nil) }
-  scope :ordered, -> { order(:filename) }
+  scope :ordered, -> { order(:filename, :path) }
 
   after_create :update_parent
   after_save :update_parent

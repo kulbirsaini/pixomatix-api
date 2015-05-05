@@ -131,7 +131,7 @@ module Pixomatix
       puts "Populating images from #{directory} ..."
       images_in_dir = Dir.entries(directory)
       images_in_db = force_populate ? [] : Image.where(parent: parent).where.not(filename: nil).select(:filename).collect(&:filename)
-      images_to_create = (images_in_dir - images_in_db).select{ |filename| self.class.is_image_extension?(filename) }
+      images_to_create = (images_in_dir - images_in_db).select{ |filename| self.class.is_image_extension?(filename) }.sort
       images_to_delete = images_in_db - images_in_dir
       Image.where(filename: images_to_delete, parent: parent).destroy_all
 

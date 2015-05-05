@@ -13,7 +13,6 @@
         <%= link_to(content_tag(:span, '', class: 'glyphicon glyphicon-fast-backward'), '#/images/{{gallery_id}}/slideshow/{{getFirstImage().id}}', class: 'btn btn-warning') %>
         <%= link_to(content_tag(:span, '', class: 'glyphicon glyphicon-backward'), '#/images/{{gallery_id}}/slideshow/{{getPreviousImage().id}}', class: 'btn btn-warning') %>
         <%= button_tag('', 'ng-click': 'rotateAntiClockwise()', class: 'btn btn-warning'){ content_tag(:span, '', class: 'glyphicon glyphicon-repeat', style: 'transform: scale(-1,1);') } %>
-        <%= button_tag('', 'ng-click': 'redirectToParentGallery()', class: 'btn btn-warning'){ content_tag(:span, '', class: 'glyphicon glyphicon-remove-circle') } %>
         <div class="btn-group dropup" role="group">
           <button type="button" id="settings-menu" class="btn btn-warning dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
             <span class="glyphicon glyphicon-cog"></span>
@@ -32,6 +31,8 @@
             </li>
           </ul>
         </div>
+        <%= button_tag('', 'ng-click': 'redirectToParentGallery()', class: 'btn btn-warning'){ content_tag(:span, '', class: 'glyphicon glyphicon-remove-circle') } %>
+        <%= link_to(content_tag(:span, '', class: 'glyphicon glyphicon-download'), '/images/{{getCurrentImage().id}}/download', class: 'btn btn-warning') %>
         <%= button_tag('', 'ng-click': 'rotateClockwise()', class: 'btn btn-warning'){ content_tag(:span, '', class: 'glyphicon glyphicon-repeat') } %>
         <%= link_to(content_tag(:span, '', class: 'glyphicon glyphicon-forward'), '#/images/{{gallery_id}}/slideshow/{{getNextImage().id}}', class: 'btn btn-warning') %>
         <%= link_to(content_tag(:span, '', class: 'glyphicon glyphicon-fast-forward'), '#/images/{{gallery_id}}/slideshow/{{getLastImage().id}}', class: 'btn btn-warning') %>

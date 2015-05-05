@@ -1,7 +1,7 @@
 class ImagesController < ApplicationController
   include ImagesHelper
 
-  before_action :set_image, only: [:show, :galleries, :images, :image, :parent]
+  before_action :set_image, only: [:show, :download, :galleries, :images, :image, :parent]
 
   # GET /images
   # GET /images.json
@@ -13,6 +13,10 @@ class ImagesController < ApplicationController
   # GET /images/1.json
   def show
     render 'show_image', layout: false && return if @image.image? && params.has_key?(:show)
+  end
+
+  def download
+    send_file @image.original_path, type: @image.mime_type, disposition: 'attachment'
   end
 
   def thumbnail
@@ -50,11 +54,11 @@ class ImagesController < ApplicationController
   end
 
   def images
-    @images = @image.images
+    @images = @image.images.ordered
   end
 
   def image
-    @first_image = @image.images.first
+    @first_image = @image.images.ordered.first
   end
 
   def parent
