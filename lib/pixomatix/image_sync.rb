@@ -7,6 +7,43 @@ module Pixomatix
       @directories = directories || Rails.application.config.x.image_root
     end
 
+    def self.parse_filename(filename)
+      result = filename.scan(Rails.application.config.x.thumbnail_path_regex)[0]
+      if result.present?
+        return { type: :thumbnail, id: result[0], width: result[1], height: result[2] }
+      end
+      result = filename.scan(Rails.application.config.x.hdtv_path_regex)[0]
+      if result.present?
+        return { type: :hdtv, id: result[0], hdtv_height: result[1] }
+      end
+    end
+
+    def self.optimize_cache
+      image_cache_dir = File.join(Rails.root, Rails.application.config.x.image_cache_dir)
+      self.get_sub_directories(image_cache_dir).each do |sub_directory|
+        directory = File.join(image_cache_dir, sub_directory)
+        Dir.entries(directory).each do |filename|
+          next unless self.is_image_extension?(filename)
+          filepath = File.join(directory, filename)
+          keep_file = false
+          if result = self.parse_filename(filename)
+            if image = Image.find(result[:id])
+              keep_file = true if image.send(result[:type].to_s + '_path') == filepath
+            end
+          end
+          unless keep_file
+            FileUtils.rm(filepath)
+            puts "Removed file #{filepath}"
+          end
+        end
+        if Dir.entries(directory).size == 2
+          FileUtils.rmdir(directory)
+          puts "Removed directory #{directory}"
+        end
+      end
+      nil
+    end
+
     def self.generate_thumbnails(images = nil)
       (images || Image.images).each do |image|
         filepath = image.thumbnail_path
