@@ -1,4 +1,5 @@
 json.id image.id
+json.caption image.caption
 json.is_image image.image?
 json.is_gallery image.gallery?
 json.has_galleries image.has_galleries?

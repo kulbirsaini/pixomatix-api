@@ -119,9 +119,16 @@ class Image < ActiveRecord::Base
     end
   end
 
+  def caption
+    path = self.path
+    return nil if path.nil?
+    path = path.split('/')[-1] if path.include?('/')
+    path.gsub('_', ' ').gsub(/^[0-9]+ /, '').gsub(/^[0-9]+\. /, '')
+  end
+
   def get_random_image
     return self if image?
-    return images.first if images.first
+    return images.limit(1).order('RAND()').first if images.first
     children.each do |child|
       image = child.get_random_image
       return image if image && image.image?

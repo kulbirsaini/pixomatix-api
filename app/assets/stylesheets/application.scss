@@ -69,3 +69,25 @@ img.img-center { margin: 0 auto; }
     opacity: 1;
   }
 }
+
+.galleries a {
+  text-decoration: none;
+
+  .thumbnail {
+    margin-bottom: 0px;
+
+    .caption {
+      padding-left: 0px;
+      padding-right: 0px;
+      padding-bottom: 0px;
+
+      p {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        verticle-align: top;
+        width: 100%;
+      }
+    }
+  }
+}
