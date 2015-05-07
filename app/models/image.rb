@@ -1,6 +1,6 @@
 class Image < ActiveRecord::Base
   has_many :images, -> { where.not(filename: nil) }, class_name: 'Image', foreign_key: 'parent_id'
-  has_many :children, -> { where(filename: nil) }, class_name: 'Image', foreign_key: 'parent_id'
+  has_many :children, -> { where(filename: nil).order(:path) }, class_name: 'Image', foreign_key: 'parent_id'
   belongs_to :parent, class_name: 'Image', foreign_key: 'parent_id'
 
   scope :root, -> { where(parent_id: nil) }
@@ -93,8 +93,7 @@ class Image < ActiveRecord::Base
   end
 
   def thumbnail_path
-    File.join(Rails.root,
-              Rails.application.config.x.image_cache_dir,
+    File.join(Rails.application.config.x.image_cache_dir,
               self.parent_directory(true),
               self.id.to_s + '_' +
                 Rails.application.config.x.thumbnail_width.to_s + 'x' +
@@ -103,8 +102,7 @@ class Image < ActiveRecord::Base
   end
 
   def hdtv_path
-    File.join(Rails.root,
-              Rails.application.config.x.image_cache_dir,
+    File.join(Rails.application.config.x.image_cache_dir,
               self.parent_directory(true),
               self.id.to_s + '_' +
                 Rails.application.config.x.hdtv_height.to_s +
@@ -158,6 +156,8 @@ class Image < ActiveRecord::Base
 
   def update_parent
     return unless parent
-    parent.update(has_galleries: parent.children.count > 0, has_images: parent.images.count > 0)
+    parent.has_galleries = parent.children.first.present?
+    parent.has_images = parent.images.first.present?
+    parent.save
   end
 end

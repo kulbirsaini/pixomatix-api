@@ -18,69 +18,99 @@ module Pixomatix
       end
     end
 
-    def self.optimize_cache
-      image_cache_dir = File.join(Rails.root, Rails.application.config.x.image_cache_dir)
+    def self.info(message, msg_to_stdout = false)
+      Rails.logger.info message
+      puts message if msg_to_stdout
+    end
+
+    def self.debug(message, msg_to_stdout = false)
+      Rails.logger.debug message
+      puts message if msg_to_stdout
+    end
+
+    def self.optimize_cache(msg_to_stdout = false)
+      image_cache_dir = Rails.application.config.x.image_cache_dir
+      self.info("Pixomatix::optimize_cache Start optimize_cache image_cache_dir: #{image_cache_dir}", msg_to_stdout)
       self.get_sub_directories(image_cache_dir).each do |sub_directory|
         directory = File.join(image_cache_dir, sub_directory)
+        self.info("Pixomatix::optimize_cache Optimizing cache for #{directory}", msg_to_stdout)
         Dir.entries(directory).each do |filename|
           next unless self.is_image_extension?(filename)
           filepath = File.join(directory, filename)
           keep_file = false
           if result = self.parse_filename(filename)
-            if image = Image.find(result[:id])
+            if image = Image.where(id: result[:id]).first
               keep_file = true if image.send(result[:type].to_s + '_path') == filepath
             end
           end
           unless keep_file
             FileUtils.rm(filepath)
-            puts "Removed file #{filepath}"
+            self.info("Pixomatix::optimize_cache Removed file #{filepath}", msg_to_stdout)
           end
         end
         if Dir.entries(directory).size == 2
           FileUtils.rmdir(directory)
-          puts "Removed directory #{directory}"
+          self.info("Pixomatix::optimize_cache Removed directory #{directory}", msg_to_stdout)
         end
       end
+      self.info("Pixomatix::optimize_cache Finish optimize_cache image_cache_dir: #{image_cache_dir}", msg_to_stdout)
       nil
     end
 
-    def self.generate_thumbnails(images = nil)
+    def self.generate_thumbnails(images = nil, msg_to_stdout = false)
+      self.info("Pixomatix::generate_thumbnails Start", msg_to_stdout)
       (images || Image.images).each do |image|
         filepath = image.thumbnail_path
-        next if File.exists?(filepath)
-        result = image.scale(Rails.application.config.x.thumbnail_width, Rails.application.config.x.thumbnail_height, filepath)
-        puts "Generated thumbnail for #{image.original_path} at #{filepath}" if result
+        if File.exists?(filepath)
+          self.info("Pixomatix::generate_thumbnails Exists at #{filepath} for Image: #{image.id}", msg_to_stdout)
+          next
+        end
+        if image.scale(Rails.application.config.x.thumbnail_width, Rails.application.config.x.thumbnail_height, filepath)
+          self.info("Pixomatix::generate_thumbnails Created at #{filepath} for Image: #{image.id}", msg_to_stdout)
+        else
+          self.info("Pixomatix::generate_thumbnails Not required for Image: #{image.id}", msg_to_stdout)
+        end
       end
+      self.info("Pixomatix::generate_thumbnails Finish", msg_to_stdout)
       nil
     end
 
-    def self.generate_hdtv_images(images = nil)
+    def self.generate_hdtv_images(images = nil, msg_to_stdout = false)
+      self.info("Pixomatix::generate_hdtv_images Start", msg_to_stdout)
       (images || Image.images).each do |image|
         filepath = image.hdtv_path
-        next if File.exists?(filepath)
-        result = image.resize_to_hdtv(Rails.application.config.x.hdtv_height, filepath)
-        puts "Generated HDTV image for #{image.original_path} at #{filepath}" if result
+        if File.exists?(filepath)
+          self.info("Pixomatix::generate_hdtv_images Exists at #{filepath} for Image: #{image.id}", msg_to_stdout)
+          next
+        end
+        if image.resize_to_hdtv(Rails.application.config.x.hdtv_height, filepath)
+          self.info("Pixomatix::generate_hdtv_images Created at #{filepath} for Image: #{image.id}", msg_to_stdout)
+        else
+          self.info("Pixomatix::generate_hdtv_images Not required for Image: #{image.id}", msg_to_stdout)
+        end
       end
+      self.info("Pixomatix::generate_hdtv_images Finish", msg_to_stdout)
       nil
     end
 
-    def rename_images(directory = nil)
+    def rename_images(directory = nil, msg_to_stdout = false)
       if directory
-        rename_images_from_directory_wrapper(directory)
+        rename_images_from_directory_wrapper(directory, msg_to_stdout)
         self.class.get_sub_directories(directory).each do |sub_directory|
-          rename_images(File.join(directory, sub_directory))
+          rename_images(File.join(directory, sub_directory), msg_to_stdout)
         end
       else
         @directories.each do |directory|
-          rename_images_from_directory_wrapper(directory)
+          rename_images_from_directory_wrapper(directory, msg_to_stdout)
           self.class.get_sub_directories(directory).each do |sub_directory|
-            rename_images(File.join(directory, sub_directory))
+            rename_images(File.join(directory, sub_directory), msg_to_stdout)
           end
         end
       end
     end
 
-    def fix_exif_data(directory)
+    def fix_exif_data(directory, msg_to_stdout = false)
+      self.class.info("Pixomatix::fix_exif_data Start for #{directory}", msg_to_stdout)
       timezone = Time.now.zone
       prev_datatime = nil
 
@@ -92,93 +122,135 @@ module Pixomatix
         image.destroy!
 
         if datetime.nil? && prev_datatime.nil?
-          puts 'failed! Halting...!!'
+          self.class.info("Pixomatix::fix_exif_data Failed. Not enough data. Halting...!", msg_to_stdout)
           return
         elsif datetime.nil?
-          print "Fixing EXIF data for #{filename} ..."
+          self.class.info("Pixomatix::fix_exif_data Fixing EXIF data for #{filepath}", msg_to_stdout)
           image_exif = MiniExiftool.new(filepath)
           datetime = (DateTime.strptime(prev_datatime + " #{timezone}", "%Y:%m:%d %H:%M:%S %Z").to_time + 1).to_s(:db)
           image_exif[:date_time_original] = datetime
           image_exif.save
-          puts "fixed!"
         end
         prev_datatime = datetime
       end
-      nil
+      true
+    rescue Exception => e
+      self.class.info("Pixomatix::fix_exif_data Error for #{directory}", msg_to_stdout)
+      self.class.debug("Pixomatix::fix_exif_data Trace\n#{e.backtrace.join("\n")}", msg_to_stdout)
+      raise e
+    ensure
+      self.class.info("Pixomatix::fix_exif_data Finish for #{directory}", msg_to_stdout)
     end
 
-    def rename_images_from_directory_wrapper(directory)
+    def rename_images_from_directory_wrapper(directory, msg_to_stdout = false)
       begin
-        rename_images_from_directory(directory)
+        rename_images_from_directory(directory, msg_to_stdout)
       rescue
-        fix_exif_data(directory)
-        rename_images_from_directory(directory)
+        rename_images_from_directory(directory, msg_to_stdout) if fix_exif_data(directory, msg_to_stdout)
       end
     end
 
-    def rename_images_from_directory(directory)
-      print "Renaming images from #{directory}..."
-      image_name_regex = /#{Rails.application.config.x.image_prefix}_[0-9]{8}_[0-9]{6}_/
+    def rename_images_from_directory(directory, msg_to_stdout = false)
+      self.class.info("Pixomatix::rename_images_from_directory Start #{directory}", msg_to_stdout)
       images = Dir.entries(directory).map do |filename|
         next unless self.class.is_image_extension?(filename)
         filepath = File.join(directory, filename)
         image = MiniMagick::Image.open(filepath)
-        data = [(image.exif['DateTimeOriginal'] || image.exif['DateTime']).gsub(':', '').gsub(' ', '_'), filename, filepath]
+        data = { datetime: (image.exif['DateTimeOriginal'] || image.exif['DateTime']).gsub(':', '').gsub(' ', '_'), filename: filename, filepath: filepath }
         image.destroy!
         data
-      end.compact.sort
+      end.compact.sort_by{ |data| data[:datetime] }
+      length = images.count.to_s.size
+      images = images.each_with_index.map do |image, index|
+        new_filename = Rails.application.config.x.image_prefix + '_' + image[:datetime] + '_' + ("%0#{length}d" % (index + 1)) + File.extname(image[:filename])
+        image.merge!({ new_filename: new_filename, new_filepath: File.join(directory, new_filename) })
+      end
 
-      if images.select{ |image| image[1] !~ image_name_regex }.count == 0
-        puts 'not required!'
+      if images.select{ |image| image[:new_filename] != image[:filename] }.count == 0
+        self.class.info("Pixomatix::rename_images_from_directory Not required", msg_to_stdout)
         return
       end
 
-      length = images.count.to_s.size
-      images.each_with_index.map do |image, index|
-        new_filepath = File.join(directory, Rails.application.config.x.image_prefix + '_' + image[0] + '_' + ("%0#{length}d" % (index + 1)) + File.extname(image[1]))
-        File.rename(image[2], new_filepath)
+      tmp_dir = "tmp/#{SecureRandom.hex(10)}-removable"
+      tmp_dir_path = File.join(Rails.application.config.x.image_cache_dir, tmp_dir)
+      FileUtils.mkdir_p(tmp_dir_path)
+      self.class.info("Pixomatix::rename_images_from_directory Created tmp directory #{tmp_dir_path}", msg_to_stdout)
+      images.each do |image|
+        image[:tmp_filepath] = File.join(tmp_dir_path, image[:filename])
+        FileUtils.mv(image[:filepath], image[:tmp_filepath])
+        self.class.info("Pixomatix::rename_images_from_directory #{image[:filepath]} => #{image[:tmp_filepath]}", msg_to_stdout)
       end
-      puts 'done'
+      images.each do |image|
+        FileUtils.mv(image[:tmp_filepath], image[:new_filepath])
+        self.class.info("Pixomatix::rename_images_from_directory #{image[:tmp_filepath]} => #{image[:new_filepath]}", msg_to_stdout)
+      end
+      FileUtils.rmdir(tmp_dir_path)
+      self.class.info("Pixomatix::rename_images_from_directory Removed tmp directory #{tmp_dir_path}", msg_to_stdout)
     rescue Exception => e
-      puts 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX failed!'
+      self.class.info("Pixomatix::rename_images_from_directory Error for #{directory}", msg_to_stdout)
+      self.class.debug("Pixomatix::rename_images_from_directory Trace\n#{e.backtrace.join("\n")}", msg_to_stdout)
       raise e
+    ensure
+      self.class.info("Pixomatix::rename_images_from_directory Finish #{directory}", msg_to_stdout)
     end
 
-    def populate_images(directory = nil, parent = nil)
+    def populate_images(directory = nil, parent = nil, force_populate = false, msg_to_stdout = false)
+      self.class.info("Pixomatix::populate_images Start", msg_to_stdout) unless parent
       if directory
-        parent = Image.find_or_create_by(path: directory, parent: parent)
-        popuplate_images_from_directory(directory, parent)
+        parent = Image.where(path: directory, parent: parent).first_or_initialize
+        parent.save
+        populate_images_from_directory(directory, parent, force_populate, msg_to_stdout)
         directory = File.join(parent.directory_tree, directory) if parent
         self.class.get_sub_directories(directory).each do |sub_directory|
-          populate_images(sub_directory, parent)
+          populate_images(sub_directory, parent, force_populate, msg_to_stdout)
+        end
+        if parent.children.count == 0 && parent.images.count == 0
+          self.class.info("Pixomatix::populate_images Removed parent : #{parent.id}", msg_to_stdout)
+          parent.destroy
         end
       else
         @directories.each do |directory|
-          parent = Image.find_or_create_by(path: directory)
-          popuplate_images_from_directory(directory, parent)
+          parent = Image.where(path: directory).first_or_initialize
+          parent.save
+          populate_images_from_directory(directory, parent, force_populate, msg_to_stdout)
           self.class.get_sub_directories(directory).each do |sub_directory|
-            populate_images(sub_directory, parent)
+            populate_images(sub_directory, parent, force_populate, msg_to_stdout)
+          end
+          if parent.children.count == 0 && parent.images.count == 0
+            self.class.info("Pixomatix::populate_images Removed parent : #{parent.id}", msg_to_stdout)
+            parent.destroy
           end
         end
       end
+      self.class.info("Pixomatix::populate_images Finish", msg_to_stdout) unless parent.parent
     end
 
-    def popuplate_images_from_directory(directory, parent, force_populate = false)
+    def populate_images_from_directory(directory, parent, force_populate = false, msg_to_stdout = false)
       directory = File.join(parent.directory_tree, directory) if parent
-      puts "Populating images from #{directory} ..."
-      images_in_dir = Dir.entries(directory)
-      images_in_db = force_populate ? [] : Image.where(parent: parent).where.not(filename: nil).select(:filename).collect(&:filename)
-      images_to_create = (images_in_dir - images_in_db).select{ |filename| self.class.is_image_extension?(filename) }.sort
-      images_to_delete = images_in_db - images_in_dir
-      Image.where(filename: images_to_delete, parent: parent).destroy_all
+      self.class.info("Pixomatix::populate_images_from_directory Start for #{directory}", msg_to_stdout)
+      images_in_dir = Dir.entries(directory).select{ |filename| self.class.is_image_extension?(filename) }.sort
+      if force_populate
+        images_to_create = images_in_dir
+        images_to_delete = Image.where(parent: parent).where.not(filename: nil).select(:filename).collect(&:filename)
+      else
+        images_in_db = Image.where(parent: parent).where.not(filename: nil).select(:filename).collect(&:filename)
+        images_to_create = images_in_dir - images_in_db
+        images_to_delete = images_in_db - images_in_dir
+      end
+      Image.where(filename: images_to_delete, parent: parent).each do |image|
+        self.class.info("Pixomatix::populate_images_from_directory Deleted Image: #{image.id} #{File.join(directory, image.filename)}", msg_to_stdout)
+        image.destroy
+      end
 
       images_to_create.each do |filename|
-        image = MiniMagick::Image.open(File.join(directory, filename))
-        Image.find_or_create_by(filename: filename, width: image.width, height: image.height, size: image.size, parent: parent, mime_type: image.mime_type)
-        puts "Added #{filename} from #{directory}"
+        filepath = File.join(directory, filename)
+        image = MiniMagick::Image.open(filepath)
+        new_image = Image.where(filename: filename, width: image.width, height: image.height, size: image.size, parent: parent, mime_type: image.mime_type).first_or_initialize
+        new_image.save
+        self.class.info("Pixomatix::populate_images_from_directory Added Image: #{new_image.id} #{filepath}", msg_to_stdout)
         image.destroy!
       end
-      puts "Done with #{directory}! Created: #{images_to_create.count}, Deleted: #{images_to_delete.count}"
+      self.class.info("Pixomatix::populate_images_from_directory Finish for #{directory} Created: #{images_to_create.count} Deleted: #{images_to_delete.count}", msg_to_stdout)
     end
 
     def self.is_image_extension?(filename)
