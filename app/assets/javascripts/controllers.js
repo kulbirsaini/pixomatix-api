@@ -51,17 +51,19 @@ galleryControllers.controller('SlideshowCtrl', ['$scope', '$routeParams', '$loca
   }
 ]);
 
-galleryControllers.controller('SlideshowNavigationCtrl', ['$scope', '$routeParams', '$location', 'Gallery', 'ImageService',
-  function($scope, $routeParams, $location, Gallery, ImageService){
+galleryControllers.controller('SlideshowNavigationCtrl', ['$scope', '$routeParams', '$location', '$timeout', 'Gallery', 'ImageService',
+  function($scope, $routeParams, $location, $timeout, Gallery, ImageService){
     $scope.initializeData = function(){
       $scope.gallery_id = $routeParams.id;
       $scope.image_id = $routeParams.image_id;
       $scope.parent_id = null;
-      $scope.currentIndex = 0;
+      $scope.currentIndex = -1;
       $scope.currentAngle = 0;
       $scope.images = [];
       $scope.quality = 'hdtv_path';
       $scope.circular = 'yes';
+      $scope.animate = true;
+      $scope.fadeOutTime = 300;
     };
 
     $scope.rotateClockwise = function(){
@@ -141,10 +143,17 @@ galleryControllers.controller('SlideshowNavigationCtrl', ['$scope', '$routeParam
       return $scope.getImageAtIndex($scope.images.length - 1);
     };
 
-    $scope.setIndexByImageId = function(image_id){
+    $scope.getIndexByImageId = function(image_id){
+      var index = null;
       angular.forEach($scope.images, function(value, key){
-        if (value.id == image_id){ $scope.currentIndex = key; return; }
+        if (value.id == image_id){ index = key; return; }
       });
+      return index;
+    };
+
+    $scope.setIndexByImageId = function(image_id){
+      var index = $scope.getIndexByImageId(image_id);
+      $timeout(function(){ $scope.currentIndex = index; $scope.animate = true; }, 1);
     };
 
     $scope.appendToImages = function(images){
@@ -158,20 +167,25 @@ galleryControllers.controller('SlideshowNavigationCtrl', ['$scope', '$routeParam
       $location.path('/images/' + $scope.parent_id);
     };
 
+    $scope.goToImage = function(id){
+      $scope.animate = false;
+      $timeout(function(){ $location.path('/images/' + $scope.gallery_id + '/slideshow/' + id); }, $scope.fadeOutTime);
+    };
+
     $scope.goToFirstImage = function(){
-      $location.path('/images/' + $scope.gallery_id + '/slideshow/' + $scope.getFirstImage().id);
+      $scope.goToImage($scope.getFirstImage().id);
     };
 
     $scope.goToLastImage = function(){
-      $location.path('/images/' + $scope.gallery_id + '/slideshow/' + $scope.getLastImage().id);
+      $scope.goToImage($scope.getLastImage().id);
     };
 
     $scope.goToPreviousImage = function(){
-      $location.path('/images/' + $scope.gallery_id + '/slideshow/' + $scope.getPreviousImage().id);
+      $scope.goToImage($scope.getPreviousImage().id);
     };
 
     $scope.goToNextImage = function(){
-      $location.path('/images/' + $scope.gallery_id + '/slideshow/' + $scope.getNextImage().id);
+      $scope.goToImage($scope.getNextImage().id);
     };
 
     $scope.isFirstButtonDisabled = function(){

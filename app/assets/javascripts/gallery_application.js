@@ -1,6 +1,7 @@
 var galleryApp = angular.module("GalleryApp", [
   'ngRoute',
   'ngTouch',
+  'ngAnimate',
   'galleryControllers',
   'galleryServices',
 ]);

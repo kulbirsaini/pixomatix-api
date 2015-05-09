@@ -18,4 +18,5 @@
 //= require angular-route/angular-route
 //= require angular-resource/angular-resource
 //= require angular-touch/angular-touch
+//= require angular-animate/angular-animate
 //= require_tree .

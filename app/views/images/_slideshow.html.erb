@@ -1,12 +1,12 @@
 <div class="slideshow">
-  <%= image_tag('', 'ng-src': "{{getPreviousImage()[quality]}}", 'ng-hide': 'true') %>
+  <%= image_tag('', 'ng-src': "{{getPreviousImage()[quality]}}", 'ng-hide': 'true', class: 'previous-img') %>
   <%= image_tag('',
                 'ng-src': "{{getCurrentImage()[quality]}}",
-                'ng-hide': '!getCurrentImage()',
                 'ng-class': 'isOddAngleRotation() ? "rotated-odd" : ""',
                 'ng-style': "{ transform: transformStyle, '-webkit-transform': transformStyle, '-ms-transform': transformStyle }",
-                class: 'img-center img-responsive', data: { dismiss: 'modal' }) %>
-  <%= image_tag('', 'ng-src': "{{getNextImage()[quality]}}", 'ng-hide': 'true') %>
+                'ng-show': 'getCurrentImage() && animate',
+                class: 'img-center img-responsive current-img animate-show') %>
+  <%= image_tag('', 'ng-src': "{{getNextImage()[quality]}}", 'ng-hide': 'true', class: 'next-img') %>
   <div class="slideshow-overlay" ng-swipe-left="nextImage()" ng-swipe-right="previousImage()">
     <div class="slideshow-controls">
       <div class="btn-group" role="group">
