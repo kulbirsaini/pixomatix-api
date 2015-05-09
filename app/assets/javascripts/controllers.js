@@ -61,6 +61,7 @@ galleryControllers.controller('SlideshowNavigationCtrl', ['$scope', '$routeParam
       $scope.currentAngle = 0;
       $scope.images = [];
       $scope.quality = 'hdtv_path';
+      $scope.circular = 'yes';
     };
 
     $scope.rotateClockwise = function(){
@@ -75,12 +76,28 @@ galleryControllers.controller('SlideshowNavigationCtrl', ['$scope', '$routeParam
       return ($scope.currentAngle / 90) % 2 !== 0;
     };
 
+    $scope.getFirstIndex = function(){
+      return 0;
+    };
+
+    $scope.getLastIndex = function(){
+      return $scope.images.length - 1;
+    };
+
     $scope.getNextIndex = function(){
-      return ($scope.currentIndex === $scope.images.length - 1) ? $scope.currentIndex : $scope.currentIndex + 1;
+      if ($scope.circular === "yes"){
+        return ($scope.currentIndex === $scope.images.length - 1) ? 0 : $scope.currentIndex + 1;
+      } else {
+        return ($scope.currentIndex === $scope.images.length - 1) ? $scope.currentIndex : $scope.currentIndex + 1;
+      }
     };
 
     $scope.getPreviousIndex = function(){
-      return ($scope.currentIndex === 0) ? $scope.currentIndex : $scope.currentIndex - 1;
+      if ($scope.circular === "yes"){
+        return ($scope.currentIndex === 0) ? $scope.images.length - 1 : $scope.currentIndex - 1;
+      } else {
+        return ($scope.currentIndex === 0) ? $scope.currentIndex : $scope.currentIndex - 1;
+      }
     };
 
     $scope.getImageAtIndex = function(index){
@@ -131,7 +148,7 @@ galleryControllers.controller('SlideshowNavigationCtrl', ['$scope', '$routeParam
     };
 
     $scope.appendToImages = function(images){
-      ImageService.setImages(images);
+      ImageService.setValue('images', images);
       $scope.images = images;
       $scope.setIndexByImageId($scope.image_id);
     };
@@ -141,25 +158,63 @@ galleryControllers.controller('SlideshowNavigationCtrl', ['$scope', '$routeParam
       $location.path('/images/' + $scope.parent_id);
     };
 
+    $scope.goToFirstImage = function(){
+      $location.path('/images/' + $scope.gallery_id + '/slideshow/' + $scope.getFirstImage().id);
+    };
+
+    $scope.goToLastImage = function(){
+      $location.path('/images/' + $scope.gallery_id + '/slideshow/' + $scope.getLastImage().id);
+    };
+
+    $scope.goToPreviousImage = function(){
+      $location.path('/images/' + $scope.gallery_id + '/slideshow/' + $scope.getPreviousImage().id);
+    };
+
+    $scope.goToNextImage = function(){
+      $location.path('/images/' + $scope.gallery_id + '/slideshow/' + $scope.getNextImage().id);
+    };
+
+    $scope.isFirstButtonDisabled = function(){
+      return $scope.circular == "no" && $scope.getFirstIndex() == $scope.currentIndex;
+    };
+
+    $scope.isPreviousButtonDisabled = function(){
+      return $scope.circular == "no" && $scope.getPreviousIndex() == $scope.currentIndex;
+    };
+
+    $scope.isNextButtonDisabled = function(){
+      return $scope.circular == "no" && $scope.getNextIndex() == $scope.currentIndex;
+    };
+
+    $scope.isLastButtonDisabled = function(){
+      return $scope.circular == "no" && $scope.getLastIndex() == $scope.currentIndex;
+    };
+
     //Handle Keypress
     $scope.$on('key.escape', function(event){ $scope.redirectToParentGallery(); });
-    $scope.$on('key.up', function(event){ $scope.firstImage(); });
-    $scope.$on('key.left', function(event){ $scope.previousImage(); });
-    $scope.$on('key.right', function(event){ $scope.nextImage(); });
-    $scope.$on('key.down', function(event){ $scope.lastImage(); });
+    $scope.$on('key.up', function(event){ $scope.goToFirstImage(); });
+    $scope.$on('key.left', function(event){ $scope.goToPreviousImage(); });
+    $scope.$on('key.right', function(event){ $scope.goToNextImage(); });
+    $scope.$on('key.down', function(event){ $scope.goToLastImage(); });
     $scope.$watch("currentAngle", function(value){ $scope.transformStyle = "rotate(" + $scope.currentAngle + "deg)"; });
     $scope.$watch("currentIndex", function(value){ $scope.currentAngle = 0; });
+    $scope.$watch("circular", function(value){ ImageService.setValue('circular', value); });
+    $scope.$watch("quality", function(value){ ImageService.setValue('quality', value); });
 
     $scope.initializeData();
-    if (ImageService.getImages().length === 0){
+    if (typeof(ImageService.getValue('images')) === "undefined"){
       console.log("Fetching!");
-      Gallery.getObject({ operation: 'parent', id: $scope.gallery_id }, function(data){ $scope.parent_id = data.parent_id; ImageService.setParentId(data.parent_id); });
+      Gallery.getObject({ operation: 'parent', id: $scope.gallery_id }, function(data){ $scope.parent_id = data.parent_id; ImageService.setValue('parent_id', data.parent_id); });
       Gallery.getCollection({ operation: 'images', id: $scope.gallery_id }, $scope.appendToImages)
+      ImageService.setValue('quality', $scope.quality);
+      ImageService.setValue('circular', $scope.circular);
     } else {
       console.log("Cached!");
-      $scope.parent_id = ImageService.getParentId();
-      $scope.images = ImageService.getImages();
+      $scope.parent_id = ImageService.getValue('parent_id');
+      $scope.images = ImageService.getValue('images');
       $scope.setIndexByImageId($scope.image_id);
+      $scope.circular = ImageService.getValue('circular');
+      $scope.quality = ImageService.getValue('quality');
     }
   }
 ]);

@@ -9,12 +9,6 @@ class ImagesController < ApplicationController
     @images = Image.root
   end
 
-  # GET /images/1
-  # GET /images/1.json
-  def show
-    render 'show_image', layout: false && return if @image.image? && params.has_key?(:show)
-  end
-
   def download
     send_file @image.original_path, type: @image.mime_type, disposition: 'attachment'
   end

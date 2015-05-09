@@ -21,28 +21,18 @@ galleryServices.factory("Gallery", ["$resource", "$routeParams",
 
 galleryServices.service('ImageService', ['Gallery',
   function(Gallery){
-    this.images = [];
-    this.parent_id = null;
+    this.store = {}
 
     this.resetData = function(){
-      this.images = [];
-      this.parent_id = null;
+      this.store = {};
     };
 
-    this.setImages = function(images){
-      this.images = images;
+    this.setValue = function(variable, values){
+      this.store[variable] = values;
     };
 
-    this.getImages = function(){
-      return this.images;
-    };
-
-    this.setParentId = function(parent_id){
-      this.parent_id = parent_id;
-    };
-
-    this.getParentId = function(){
-      return this.parent_id;
+    this.getValue = function(variable){
+      return this.store[variable];
     };
   }
 ]);
