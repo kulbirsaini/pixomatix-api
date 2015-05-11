@@ -57,12 +57,20 @@ galleryControllers.controller('SlideshowCtrl', ['$scope', '$route', '$routeParam
       $scope.leftOffset = '0px';
       $scope.lastRoute = $route.current;
       $scope.thumbnail_width = 105; //with margin/padding
-      $scope.thumbnail_height = 150; //with margin/padding
+      $scope.slide_height_padding = 150; //with margin/padding
+    };
+
+    $scope.setSlideHeightPadding = function(){
+      if (angular.element('body')[0].offsetWidth < 992){
+        $scope.slide_height_padding = 45;
+      } else {
+        $scope.slide_height_padding = 150;
+      }
     };
 
     $scope.setRotatedWidth = function(){
       if ($scope.isOddAngleRotation()){
-        $scope.rotatedWidth = (angular.element('body')[0].scrollHeight - $scope.thumbnail_height) + 'px';
+        $scope.rotatedWidth = (angular.element('body')[0].scrollHeight - $scope.slide_height_padding) + 'px';
       } else {
         $scope.rotatedWidth = null;
       }
@@ -226,7 +234,7 @@ galleryControllers.controller('SlideshowCtrl', ['$scope', '$route', '$routeParam
     $scope.$on('key.down', function(event){ $scope.goToLastImage(); });
 
     // Watch variables
-    $scope.$watch("currentAngle", function(value){ $scope.transformStyle = "rotate(" + $scope.currentAngle + "deg)"; $scope.setRotatedWidth(); });
+    $scope.$watch("currentAngle", function(value){ $scope.transformStyle = "rotate(" + $scope.currentAngle + "deg)"; $scope.setSlideHeightPadding(); $scope.setRotatedWidth(); });
     $scope.$watch("currentIndex", function(value){ $scope.currentAngle = 0; $scope.setLeftOffset(); });
     $scope.$watch("circular", function(value){ Settings.setValue('circular', value); });
     $scope.$watch("quality", function(value){ Settings.setValue('quality', value); });
