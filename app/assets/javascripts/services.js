@@ -19,20 +19,20 @@ galleryServices.factory("Gallery", ["$resource", "$routeParams",
   }
 ]);
 
-galleryServices.service('ImageService', ['Gallery',
+galleryServices.service('Settings', ['Gallery',
   function(Gallery){
-    this.store = {}
+    this.settings = {}
 
-    this.resetData = function(){
-      this.store = {};
+    this.reset = function(){
+      this.settings = {};
     };
 
     this.setValue = function(variable, values){
-      this.store[variable] = values;
+      this.settings[variable] = values;
     };
 
     this.getValue = function(variable){
-      return this.store[variable];
+      return this.settings[variable];
     };
   }
 ]);

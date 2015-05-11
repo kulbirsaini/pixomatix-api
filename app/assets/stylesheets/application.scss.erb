@@ -15,89 +15,79 @@
 @import "bootstrap-sprockets";
 @import "bootstrap";
 
+@mixin transition($value){
+  -webkit-transition: $value;
+  -moz-transition: $value;
+  -ms-transition: $value;
+  -o-transition: $value;
+  transition: $value;
+}
+
+@mixin transform($value){
+  -webkit-transform: $value;
+  -moz-transform: $value;
+  -ms-transform: $value;
+  -o-transform: $value;
+  transform: $value;
+}
+
+@mixin transition-origin($value){
+  -webkit-transfor-origin: $value;
+  -moz-transfor-origin: $value;
+  -ms-transfor-origin: $value;
+  -o-transfor-origin: $value;
+  transfor-origin: $value;
+}
+
+@mixin perspective($value){
+  -webkit-perspective: $value;
+  -moz-perspective: $value;
+  -ms-perspective: $value;
+  -o-perspective: $value;
+  perspective: $value;
+}
+
+@mixin transform-style($value){
+  -webkit-transform-style: $value;
+  -moz-transform-style: $value;
+  -ms-transform-style: $value;
+  -o-transform-style: $value;
+  transform-style: $value;
+}
+
 .hidden { display: none; }
 div.top-buffer { margin-top: 20px; }
 div.bottom-buffer { margin-bottom: 20px; }
 img.img-center { margin: 0 auto; }
 
-.slideshow {
-  margin: 0px;
-  padding: 0px;
-  display: flex;
-  align-items: center;
-  min-height: 100%;
-  min-height: 100vh;
-  background: #000;
+.slideshow-overlay {
+  width: 100%;
+  height: 35px;
+  bottom: 0px;
+  position: fixed;
 
-  img {
-    max-height: 100%;
-    max-height: 100vh;
-  }
-
-  img.rotated-odd {
-    max-width: 100vh;
-  }
-
-  .animate-show.ng-hide-add,
-  .animate-show.ng-hide-remove {
-    -webkit-transition: all linear 0.3s;
-    -moz-transition: all linear 0.3s;
-    -o-transition: all linear 0.3s;
-    transition: all linear 0.3s;
-    display: block !important;
-  }
-
-  .animate-show.ng-hide-add.ng-hide-add-active,
-  .animate-show.ng-hide-remove {
-    line-height: 0;
-    opacity: 0;
-    padding: 0 10px;
-  }
-
-  .animate-show.ng-hide-add,
-  .animate-show.ng-hide-remove.ng-hide-remove-active {
-    line-height: 20px;
-    opacity: 1;
-    padding: 10px;
-    background: #FFF;
-  }
-
-  .current-img {
-    padding: 10px;
-    background: #FFF;
-  }
-
-  .slideshow-overlay {
-    top: 0px;
-    left: 0px;
-    right: 0px;
-    bottom: 0px;
-    opacity: 1;
-    width: 100%;
-    height: 100%;
+  .slideshow-controls {
+    opacity: 0.75;
+    @extend .text-center;
     position: fixed;
+    bottom: 5px;
+    width: 100%;
 
-    .slideshow-controls {
-      @extend .text-center;
-      position: fixed;
-      bottom: 0px;
-      width: 100%;
+    ul.dropdown-settings-menu {
+      width: 260px;
+      padding: 10px;
 
-      ul.dropdown-settings-menu {
-        width: 260px;
-        padding: 10px;
-
-        li {
-          margin: 5px;
-        }
+      li {
+        margin: 5px;
       }
     }
   }
 }
 
-.slideshow:hover .slideshow-overlay {
+.slideshow-overlay:hover .slideshow-controls {
   opacity: 1;
 }
+
 
 .galleries a.thumbnail {
   max-width: <%= Rails.application.config.x.thumbnail_width %>px;
@@ -116,6 +106,69 @@ img.img-center { margin: 0 auto; }
       white-space: nowrap;
       verticle-align: top;
       width: 100%;
+    }
+  }
+}
+
+.slideshow {
+  background: black;
+  position: fixed;
+  top: 0px;
+  bottom: 0px;
+  left: 0px;
+  right: 0px;
+  width: 100%;
+  height: 100%;
+
+  .slides {
+    width: 100%;
+    height: 100%;
+    padding-bottom: 150px;
+    text-align: center;
+    display: flex;
+    align-items: center;
+
+    img.current-img {
+      max-height: 100%;
+      background: white;
+      padding: 5px;
+      border-radius: 3px;
+      margin: 0 auto;
+    }
+
+    img.current-img.rotated-odd {
+      max-height: none;
+    }
+
+    .thumbnails {
+      width: 100%;
+      height: 100px;
+      position: fixed;
+      bottom: 45px;
+      left: 0px;
+
+      ul.nav {
+        white-space: nowrap;
+        position: relative;
+
+        li {
+          display: inline-block;
+          margin-left: 5px;
+
+          img.thumbnail {
+            width: 100px;
+            height: 100px;
+            float: left;
+            padding: 0px;
+            margin-bottom: 0px;
+          }
+
+          img.thumbnail.active {
+            border: 4px solid white;
+            border-color: cyan;
+          }
+        }
+      }
     }
   }
 }

@@ -1,7 +1,6 @@
 var galleryApp = angular.module("GalleryApp", [
   'ngRoute',
   'ngTouch',
-  'ngAnimate',
   'galleryControllers',
   'galleryServices',
 ]);
@@ -11,7 +10,7 @@ galleryApp.config(['$routeProvider',
     $routeProvider.
     when('/images/:id/slideshow/:image_id', {
       templateUrl: 'slideshow.html',
-      controller: 'SlideshowNavigationCtrl'
+      controller: 'SlideshowCtrl'
     }).
     when('/images/:id/slideshow', {
       templateUrl: 'slideshow.html',

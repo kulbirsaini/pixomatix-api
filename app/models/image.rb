@@ -43,6 +43,10 @@ class Image < ActiveRecord::Base
     !filename.nil?
   end
 
+  def vertical?
+    image? && height > width
+  end
+
   def gallery?
     filename.nil?
   end

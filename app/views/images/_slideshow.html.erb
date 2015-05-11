@@ -1,13 +1,15 @@
-<div class="slideshow">
-  <%= image_tag('', 'ng-src': "{{getPreviousImage()[quality]}}", 'ng-hide': 'true', class: 'previous-img') %>
-  <%= image_tag('',
-                'ng-src': "{{getCurrentImage()[quality]}}",
-                'ng-class': 'isOddAngleRotation() ? "rotated-odd" : ""',
-                'ng-style': "{ transform: transformStyle, '-webkit-transform': transformStyle, '-ms-transform': transformStyle }",
-                'ng-show': 'getCurrentImage() && animate',
-                class: 'img-center img-responsive current-img animate-show') %>
-  <%= image_tag('', 'ng-src': "{{getNextImage()[quality]}}", 'ng-hide': 'true', class: 'next-img') %>
-  <div class="slideshow-overlay" ng-swipe-left="nextImage()" ng-swipe-right="previousImage()">
+<div class="slideshow wireframe">
+  <div class="slides" ng-swipe-left="goToNextImage()" ng-swipe-right="goToPreviousImage()">
+    <img ng-repeat="image in images" ng-src="{{image[quality]}}" ng-show="$index === currentIndex" ng-class="isOddAngleRotation() ? 'rotated-odd' : ''" ng-style="{ 'width': rotatedWidth, '-webkit-transform': transformStyle, '-ms-transform': transformStyle, '-o-transform': transformStyle, transform: transformStyle }" class="current-img" />
+    <div class="thumbnails">
+        <ul class="nav" ng-style="{ 'left': leftOffset }">
+          <li ng-repeat="image in images">
+          <img ng-src="{{image.thumbnail_path}}" class="thumbnail" ng-class="{ 'active': $index == currentIndex }" ng-click="goToImageAtIndex($index)" />
+          </li>
+        </ul>
+    </div>
+  </div>
+  <div class="slideshow-overlay">
     <div class="slideshow-controls">
       <div class="btn-group" role="group">
         <%= button_tag('', 'ng-click': 'goToFirstImage()', class: 'btn btn-warning', 'ng-disabled': "isFirstButtonDisabled()"){ content_tag(:span, '', class: 'glyphicon glyphicon-fast-backward') } %>
