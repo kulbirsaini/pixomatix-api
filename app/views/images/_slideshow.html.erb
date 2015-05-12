@@ -1,6 +1,10 @@
 <div class="slideshow wireframe">
   <div class="slides" ng-swipe-left="goToNextImage()" ng-swipe-right="goToPreviousImage()">
-    <img ng-repeat="image in images" ng-src="{{image[quality]}}" ng-show="$index === currentIndex" ng-class="isOddAngleRotation() ? 'rotated-odd' : ''" ng-style="{ 'width': rotatedWidth, '-webkit-transform': transformStyle, '-ms-transform': transformStyle, '-o-transform': transformStyle, transform: transformStyle }" class="current-img img-responsive" />
+    <img ng-src="{{getCurrentImage()[quality]}}" ng-hide="!getCurrentImage()" ng-class="isOddAngleRotation() ? 'rotated-odd' : ''" ng-style="{ 'width': rotatedWidth, '-webkit-transform': transformStyle, '-ms-transform': transformStyle, '-o-transform': transformStyle, transform: transformStyle }" class="current-img img-responsive" />
+    <img ng-src="{{getNextImage()[quality]}}" ng-hide="true" />
+    <img ng-src="{{getLastImage()[quality]}}" ng-hide="true" />
+    <img ng-src="{{getPreviousImage()[quality]}}" ng-hide="true" />
+    <img ng-src="{{getFirstImage()[quality]}}" ng-hide="true" />
     <div class="thumbnails">
         <ul class="nav" ng-style="{ 'left': leftOffset }">
           <li ng-repeat="image in images">
