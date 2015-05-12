@@ -4,9 +4,7 @@ Rails.application.routes.draw do
       get :galleries
       get :images
       get :image
-      get :thumbnail
       get :original
-      get :hdtv
       get :parent
       get :download
     end

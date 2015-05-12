@@ -13,33 +13,9 @@ class ImagesController < ApplicationController
     send_file @image.original_path, type: @image.mime_type, disposition: 'attachment'
   end
 
-  def thumbnail
-    begin
-      @image = Image.find(params[:id])
-      image_path = @image.get_random_image.get_path(:thumbnail)
-    rescue
-      image_path = get_asset_path("default_gallery_image_thumbnail.png")
-    end
-    send_file image_path, type: @image.try(:mime_type) || 'image/png', disposition: 'inline'
-  end
-
-  def hdtv
-    begin
-      @image = Image.find(params[:id])
-      image_path = @image.get_random_image.get_path(:hdtv)
-    rescue
-      image_path = get_asset_path("default_gallery_image_hdtv.png")
-    end
-    send_file image_path, type: @image.try(:mime_type) || 'image/png', disposition: 'inline'
-  end
-
   def original
-    begin
-      @image = Image.find(params[:id])
-      image_path = @image.get_random_image.get_path(:original)
-    rescue
-      image_path = get_asset_path("default_gallery_image_original.png")
-    end
+    @image = Image.find(params[:id])
+    image_path = @image.original_path || get_asset_path("default_gallery_image_original.png")
     send_file image_path, type: @image.try(:mime_type) || 'image/png', disposition: 'inline'
   end
 

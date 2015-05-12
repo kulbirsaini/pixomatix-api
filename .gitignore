@@ -20,6 +20,7 @@
 test/
 public/assets
 public/uploads/
+public/cache/
 public/sitemap.xml
 public/sitemap.xml.gz
 

@@ -97,28 +97,29 @@ class Image < ActiveRecord::Base
   end
 
   def thumbnail_path
-    File.join(Rails.application.config.x.image_cache_dir,
+    return nil unless image?
+    path = File.join(Rails.application.config.x.image_cache_path_prefix,
               self.parent_directory(true),
               self.id.to_s + '_' +
-                Rails.application.config.x.thumbnail_width.to_s + 'x' +
-                Rails.application.config.x.thumbnail_height.to_s +
-                File.extname(self.filename))
+              Rails.application.config.x.thumbnail_width.to_s + 'x' +
+              Rails.application.config.x.thumbnail_height.to_s +
+              File.extname(self.filename))
+    File.exists?(File.join(Rails.root, 'public', path)) ? path : nil
   end
 
   def hdtv_path
-    File.join(Rails.application.config.x.image_cache_dir,
+    path = File.join(Rails.application.config.x.image_cache_path_prefix,
               self.parent_directory(true),
               self.id.to_s + '_' +
                 Rails.application.config.x.hdtv_height.to_s +
                 File.extname(self.filename))
+    File.exists?(File.join(Rails.root, 'public', path)) ? path : nil
   end
 
   def original_path
-    if image?
-      File.join(self.directory_tree, self.filename)
-    else
-      File.join(self.directory_tree, self.path)
-    end
+    return nil unless image?
+    path = File.join(self.directory_tree, self.filename)
+    File.exists?(path) ? path : nil
   end
 
   def caption
@@ -136,24 +137,6 @@ class Image < ActiveRecord::Base
       return image if image && image.image?
     end
     nil
-  end
-
-  def get_path(type)
-    return get_asset_path('default_gallery_image_thumbnail.png') if !image?
-    type = type.to_s
-    case type
-    when 'original'
-      return original_path if File.exists?(original_path)
-      return get_asset_path('default_gallery_image_original.png')
-    when 'hdtv'
-      return hdtv_path if File.exists?(hdtv_path)
-      return original_path if File.exists?(original_path)
-      return get_asset_path('default_gallery_image_hdtv.png')
-    when 'thumbnail'
-      return thumbnail_path if File.exists?(thumbnail_path)
-      return get_asset_path('default_gallery_image_thumbnail.png')
-    end
-    get_asset_path('default_gallery_image_thumbnail.png')
   end
 
   private
