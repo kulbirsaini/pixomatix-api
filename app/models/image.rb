@@ -96,6 +96,16 @@ class Image < ActiveRecord::Base
     true
   end
 
+  def absolute_thumbnail_path
+    return nil unless image?
+    File.join(Rails.application.config.x.image_cache_dir,
+              self.parent_directory(true),
+              self.id.to_s + '_' +
+              Rails.application.config.x.thumbnail_width.to_s + 'x' +
+              Rails.application.config.x.thumbnail_height.to_s +
+              File.extname(self.filename))
+  end
+
   def thumbnail_path
     return nil unless image?
     path = File.join(Rails.application.config.x.image_cache_path_prefix,
@@ -107,7 +117,17 @@ class Image < ActiveRecord::Base
     File.exists?(File.join(Rails.root, 'public', path)) ? path : nil
   end
 
+  def absolute_hdtv_path
+    return nil unless image?
+    File.join(Rails.application.config.x.image_cache_dir,
+              self.parent_directory(true),
+              self.id.to_s + '_' +
+                Rails.application.config.x.hdtv_height.to_s +
+                File.extname(self.filename))
+  end
+
   def hdtv_path
+    return nil unless image?
     path = File.join(Rails.application.config.x.image_cache_path_prefix,
               self.parent_directory(true),
               self.id.to_s + '_' +

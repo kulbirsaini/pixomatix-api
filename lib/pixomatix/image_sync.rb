@@ -60,7 +60,7 @@ module Pixomatix
     def self.generate_thumbnails(images = nil, msg_to_stdout = false)
       self.info("Pixomatix::generate_thumbnails Start", msg_to_stdout)
       (images || Image.images).each do |image|
-        filepath = image.thumbnail_path
+        filepath = image.absolute_thumbnail_path
         if File.exists?(filepath)
           self.info("Pixomatix::generate_thumbnails Exists at #{filepath} for Image: #{image.id}", msg_to_stdout)
           next
@@ -78,7 +78,7 @@ module Pixomatix
     def self.generate_hdtv_images(images = nil, msg_to_stdout = false)
       self.info("Pixomatix::generate_hdtv_images Start", msg_to_stdout)
       (images || Image.images).each do |image|
-        filepath = image.hdtv_path
+        filepath = image.absolute_hdtv_path
         if File.exists?(filepath)
           self.info("Pixomatix::generate_hdtv_images Exists at #{filepath} for Image: #{image.id}", msg_to_stdout)
           next
