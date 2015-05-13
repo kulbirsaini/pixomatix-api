@@ -31,6 +31,9 @@ gem 'html5shiv-rails'
 # Fonts
 gem "font-awesome-rails"
 
+# Amazon
+gem 'aws-sdk'
+
 group :development, :test do
   # Use Unicorn as the app server
   gem 'unicorn'

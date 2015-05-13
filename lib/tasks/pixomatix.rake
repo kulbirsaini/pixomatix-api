@@ -28,4 +28,20 @@ namespace :pixomatix do
   task generate_hdtv_images: :environment do
     Pixomatix::ImageSync.generate_hdtv_images(nil, true)
   end
+
+  desc "Sync thumbnails to AWS S3"
+  task sync_thumbnails: :environment do
+    Pixomatix::AwsSync.sync_thumbnails(nil, true)
+  end
+
+  desc "Sync HDTV images to AWS S3"
+  task sync_hdtv_images: :environment do
+    Pixomatix::AwsSync.sync_hdtv_images(nil, true)
+  end
+
+  desc "Sync thumbnails and HDTV images to AWS S3"
+  task aws_sync: :environment do
+    Rake::Task["pixomatix:sync_thumbnails"].invoke
+    Rake::Task["pixomatix:sync_hdtv_images"].invoke
+  end
 end

@@ -1,0 +1,17 @@
+default: &default
+  access_key_id: 'AWS S3 Access Key'
+  secret_access_key: 'AWS S3 Secret'
+  region: 'S3 Region code from http://docs.aws.amazon.com/general/latest/gr/rande.html#s3_region'
+  s3_bucket: 'AWS S3 Bucket Name'
+
+development:
+  <<: *default
+
+test:
+  <<: *default
+
+stage:
+  <<: *default
+
+production:
+  <<: *default

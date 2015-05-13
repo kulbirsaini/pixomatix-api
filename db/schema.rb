@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150502080431) do
+ActiveRecord::Schema.define(version: 20150513140356) do
 
   create_table "images", force: :cascade do |t|
     t.integer  "parent_id",     limit: 4
@@ -25,6 +25,8 @@ ActiveRecord::Schema.define(version: 20150502080431) do
     t.datetime "updated_at",                                null: false
     t.boolean  "has_galleries", limit: 1,   default: false
     t.boolean  "has_images",    limit: 1,   default: false
+    t.string   "aws_thumb_url", limit: 255
+    t.string   "aws_hdtv_url",  limit: 255
   end
 
 end

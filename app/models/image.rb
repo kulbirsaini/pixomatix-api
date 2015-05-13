@@ -108,6 +108,7 @@ class Image < ActiveRecord::Base
 
   def thumbnail_path
     return nil unless image?
+    return aws_thumb_url if aws_thumb_url.present? && Rails.application.config.x.use_aws
     path = File.join(Rails.application.config.x.image_cache_path_prefix,
               self.parent_directory(true),
               self.id.to_s + '_' +
@@ -128,6 +129,7 @@ class Image < ActiveRecord::Base
 
   def hdtv_path
     return nil unless image?
+    return aws_hdtv_url if aws_hdtv_url.present? && Rails.application.config.x.use_aws
     path = File.join(Rails.application.config.x.image_cache_path_prefix,
               self.parent_directory(true),
               self.id.to_s + '_' +
