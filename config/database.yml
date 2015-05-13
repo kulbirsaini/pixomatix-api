@@ -1,0 +1,20 @@
+default: &default
+  adapter: mysql2
+  encoding: utf8
+  pool: 5
+  username: rails
+  password: dev
+  socket: /var/run/mysqld/mysqld.sock
+  timeout: 5000
+
+development:
+  <<: *default
+  database: pixomatix_com
+
+test:
+  <<: *default
+  database: pixomatix_com
+
+production:
+  <<: *default
+  database: pixomatix_com
