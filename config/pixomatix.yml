@@ -2,7 +2,7 @@ default: &default
   thumbnail_width: 200
   thumbnail_height: 200
   hdtv_height: 1080
-  image_cache_dir: 'public/cache/' # If image cache directory is outside Rails app, provide absolute path and set image_cache_dir_in_rails_root to false
+  image_cache_dir: 'public/cache/' # relative path inside Rails.root
   image_prefix: 'KSC'
   thumbnail_path_regex: !ruby/regexp /(^[0-9]+)_([0-9]+)x([0-9]+)\.([a-z0-9]+)/i
   hdtv_path_regex: !ruby/regexp /(^[0-9]+)_([0-9]+)\.([a-z0-9]+)/i
@@ -10,7 +10,7 @@ default: &default
 
 development:
   <<: *default
-  image_root: ['/stuff/AllPictures/']
+  image_root: ['/path/to/your/pics/dir/', '/vacation/pics/']
   use_aws: false
 
 test:

@@ -2,12 +2,144 @@
 
 Pixomatix is a Photo Gallery powered by [Ruby on Rails](http://rubyonrails.org/) (4.2.1) and [Angularjs](https://angularjs.org/) (1.3). It supports recursive scanning, thumbnail generation and resizing images to fit HDTV screens.
 
-## Setup Instructions
+**Demo** : [demo.pixomatix.com](http://demo.pixomatix.com/)
 
-1. Set `image_root` in `config/pixomatix.yml`.
-2. Populate images using `rake` task `rake Pixomatix::ImageSync.new.populate_images`.
-3. Generate thumbnails for all the images using task `rake Pixomatix::ImageSync.generate_thumbnails`.
-4. Generate HDTV images using task `rake Pixomatix::ImageSync.generate_hdtv_images`
+## Configuration
+
+### App Configuration
+
+Config File : `config/pixomatix.yml`
+
+```ruby
+default: &default
+  thumbnail_width: 200
+  thumbnail_height: 200
+  hdtv_height: 1080
+  image_cache_dir: 'public/cache/' # relative path inside Rails.root
+  image_prefix: 'KSC' # Used for renaming images if opted
+  thumbnail_path_regex: !ruby/regexp /(^[0-9]+)_([0-9]+)x([0-9]+)\.([a-z0-9]+)/i
+  hdtv_path_regex: !ruby/regexp /(^[0-9]+)_([0-9]+)\.([a-z0-9]+)/i
+  use_aws: false # If AWS is to be used for images
+
+development:
+  <<: *default
+  image_root: ['/path/to/your/pics/dir/', '/vacation/pics/'] # Can be multiple directories with sub-directories
+  use_aws: false
+
+test:
+  <<: *default
+  image_root: []
+
+stage:
+  <<: *default
+  image_root: []
+
+production:
+  <<: *default
+  image_root: []
+```
+
+### AWS Configuration
+
+Config File: `config/aws.yml`
+
+```ruby
+default: &default
+  access_key_id: 'AWS S3 Access Key'
+  secret_access_key: 'AWS S3 Secret'
+  region: 'S3 Region code from http://docs.aws.amazon.com/general/latest/gr/rande.html#s3_region'
+  s3_bucket: 'AWS S3 Bucket Name'
+
+development:
+  <<: *default
+
+test:
+  <<: *default
+
+stage:
+  <<: *default
+
+production:
+  <<: *default
+```
+
+## Rake Tasks
+
+#### Rename Images
+
+**WARNING**: Make sure you have a backup of your images before doing this. There is absolutely no guarantee it'll work as expected. 
+
+Running this task is completely optional.
+
+You can rename images in a directory in a continuous sequence with filesnames like `PREFIX_YYYYMMDD_HHMMSS_NNNN.jpg` where `NNNN` is zero padded sequence, time is taken from Image's EXIF data and `PREFIX` is as set in `config/pixomatix.yml`.
+
+```ruby
+rake pixomatix:rename_images
+```
+
+#### Populate Images
+
+Recursively scan `image_root` directories specified in `config/pixomatix.yml` and populate database.
+
+```ruby
+rake pixomatix:populate_images
+```
+
+#### Repopulate Images
+
+This task will flush DB entries and will pouplate database again with fresh data. It's not really required unless you want to reset all Image IDs.
+
+```ruby
+rake pixomatix:repopulate_images
+```
+
+#### Generate Thumbnails
+
+Generate thumbnails for all the populated images as per the specifications mentioned in `config/pixomatix.yml`. It won't generate thumbnails which exist already.
+
+```ruby
+rake pixomatix:generate_thumbnails
+```
+
+#### Generate HDTV Images
+
+Generate HDTV images by scaling images (preserving aspect ratio) as per HDTV heing mentioned in `config/pixomatix.yml`. It'll also skip images which already have generated HDTV images.
+
+```ruby
+rake pixomatix:generate_hdtv_images
+```
+
+#### Optimize Cache
+
+Reclaim disk space by removing thumbnails/HDTV images which are no longer required.
+
+```ruby
+rake pixomatix:optimize_cache
+```
+
+#### Sync Thumbnails To AWS S3
+
+Sync generated thumbnails to AWS S3
+
+```ruby
+rake pixomatix:sync_thumbnails
+```
+
+#### Sync HDTV Images To AWS S3
+
+Sync generated HDTV images to AWS S3
+
+```ruby
+rake pixomatix:sync_hdtv_images
+```
+
+#### Sync Everything To AWS S3
+
+This is basically a combined task for above mentioned two AWS S3 sync tasks. It'll sync thumbnails and HDTV images to AWS S3.
+
+```ruby
+rake pixomatix:aws_sync
+```
 
 ## API Endpoints
 
