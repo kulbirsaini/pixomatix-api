@@ -148,7 +148,7 @@ class Image < ActiveRecord::Base
     path = self.path
     return nil if path.nil?
     path = path.split('/')[-1] if path.include?('/')
-    path.gsub('_', ' ').gsub(/^[0-9]+ /, '').gsub(/^[0-9]+\. /, '')
+    path.gsub('_', ' ').gsub(/^[0-9]+ /, '').gsub(/^[0-9]+\. /, '').titleize
   end
 
   def get_random_image

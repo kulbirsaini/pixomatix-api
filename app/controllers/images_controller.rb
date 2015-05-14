@@ -9,6 +9,9 @@ class ImagesController < ApplicationController
     @images = Image.root
   end
 
+  def show
+  end
+
   def download
     send_file @image.original_path, type: @image.mime_type, disposition: 'attachment'
   end
