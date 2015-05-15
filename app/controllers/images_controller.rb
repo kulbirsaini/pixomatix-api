@@ -2,8 +2,8 @@ class ImagesController < ApplicationController
   include ImagesHelper
 
   before_action :set_image, only: [:show, :download, :galleries, :images, :image, :parent]
+  before_action :ensure_json_request, only: [:show]
 
-  # GET /images
   # GET /images.json
   def index
     @images = Image.root
@@ -70,5 +70,10 @@ class ImagesController < ApplicationController
     # Never trust parameters from the scary internet, only allow the white list through.
     def image_params
       params.require(:image).permit(:path, :filename, :width, :height, :size, :parent_id, :type)
+    end
+
+    def ensure_json_request
+      return if params[:format] == "json" || request.headers["Accept"] =~ /json/
+      render :nothing => true, :status => 406
     end
 end

@@ -153,12 +153,12 @@ galleryControllers.controller('SlideshowCtrl', ['$scope', '$route', '$routeParam
     };
 
     $scope.redirectToParentGallery = function(){
-      $location.path('/images/' + $scope.parent_id);
+      $location.path('/gallery/' + $scope.parent_id);
     };
 
     $scope.goToImage = function(id){
       $scope.setIndexByImageId(id);
-      $location.path('/images/' + $scope.gallery_id + '/slideshow/' + id);
+      $location.path('/gallery/' + $scope.gallery_id + '/slideshow/' + id);
     };
 
     $scope.goToImageAtIndex = function(index){

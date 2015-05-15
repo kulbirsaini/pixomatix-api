@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
-  resources :images do
+  devise_for :users, controllers: { registrations: 'registrations' }
+  resources :images, only: [:index, :show]  do
     member do
       get :galleries
       get :images

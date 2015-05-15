@@ -1,7 +1,8 @@
+<%= render partial: 'shared/navigation', locals: { up_button: true } %>
 <div class="container-fluid galleries">
   <div class="row">
     <div class="col-lg-2 col-md-2 col-sm-3 col-xs-6 top-buffer" ng-repeat="gallery in galleries">
-      <a ng-if="gallery.has_galleries == false" href="#/images/{{gallery.id}}/slideshow" class="thumbnail" title="{{gallery.caption}}">
+      <a ng-if="gallery.has_galleries == false" href="#/gallery/{{gallery.id}}/slideshow" class="thumbnail" title="{{gallery.caption}}">
         <img ng-src={{gallery.thumbnail_path}} class="img-responsive" />
         <div class="caption">
           <p class="text-center">
@@ -9,7 +10,7 @@
           </p>
         </div>
       </a>
-      <a ng-if="gallery.has_galleries == true" href="#/images/{{gallery.id}}/" class="thumbnail" title="{{gallery.caption}}">
+      <a ng-if="gallery.has_galleries == true" href="#/gallery/{{gallery.id}}/" class="thumbnail" title="{{gallery.caption}}">
         <img ng-src={{gallery.thumbnail_path}} class="img-responsive" />
         <div class="caption">
           <p class="text-center">
@@ -21,7 +22,7 @@
   </div>
   <div class="row" ng-hide="parent_id === null">
     <div class="col-md-12 text-center top-buffer bottom-buffer">
-      <a href="#/images/{{parent_id}}" class='btn btn-default'>Back</a>
+      <a href="#/gallery/{{parent_id}}" class='btn btn-warning'>Back</a>
     </div>
   </div>
 </div>

@@ -15,6 +15,9 @@ gem 'jbuilder', '~> 2.0'
 gem 'devise'
 gem 'devise-encryptable'
 
+# Forms
+gem 'simple_form'
+
 # Better output layout in console
 gem 'hirb'
 

@@ -8,24 +8,24 @@ var galleryApp = angular.module("GalleryApp", [
 galleryApp.config(['$routeProvider',
   function($routeProvider){
     $routeProvider.
-    when('/images/:id/slideshow/:image_id', {
+    when('/gallery/:id/slideshow/:image_id', {
       templateUrl: 'slideshow.html',
       controller: 'SlideshowCtrl'
     }).
-    when('/images/:id/slideshow', {
+    when('/gallery/:id/slideshow', {
       templateUrl: 'slideshow.html',
       controller: 'SlideshowCtrl'
     }).
-    when('/images/:id', {
+    when('/gallery/:id', {
       templateUrl: 'gallery.html',
       controller: 'GalleryCtrl'
     }).
-    when('/images', {
+    when('/', {
       templateUrl: 'gallery.html',
       controller: 'GalleryCtrl'
     }).
     otherwise({
-      redirectTo: '/images'
+      redirectTo: '/'
     });
   }
 ]);
