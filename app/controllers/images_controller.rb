@@ -17,10 +17,10 @@ class ImagesController < ApplicationController
   end
 
   def original
-    @image = Image.find(params[:id])
+    @image = Image.where(uid: params[:id]).first
     image_path = @image.original_path || get_asset_path("default_gallery_image_original.png")
 
-    send_params = { type: @image.mime_type || 'image/png', disposition: :inline, stream: true, filename: "#{@image.id}#{File.extname(image_path)}" }
+    send_params = { type: @image.mime_type || 'image/png', disposition: :inline, stream: true, filename: "#{@image.uid}#{File.extname(image_path)}" }
 
     response.headers["Pragma"] = "no-cache"
     response.headers["Accept-Ranges"]=  "bytes"
@@ -64,12 +64,12 @@ class ImagesController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_image
-      @image = Image.find(params[:id])
+      @image = Image.where(uid: params[:id]).first
     end
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def image_params
-      params.require(:image).permit(:path, :filename, :width, :height, :size, :parent_id, :type)
+      params.require(:image).permit(:path, :filename, :width, :height, :size, :parent_id, :type, :uid)
     end
 
     def ensure_json_request

@@ -254,9 +254,12 @@ galleryControllers.controller('SlideshowCtrl', ['$scope', '$route', '$routeParam
     // Monitor window resize
     jQuery(window).on('resize.doResize', function(){
       $scope.$apply(function(){
+        var current_image = jQuery('.current-img');
+        current_image.hide();
         $scope.setSlideHeightPadding();
         $scope.setRotatedWidth();
         $scope.setLeftOffset();
+        current_image.show();
       })
     });
     $scope.$on("$destroy", function(){ jQuery(window).off('resize.doResize'); });

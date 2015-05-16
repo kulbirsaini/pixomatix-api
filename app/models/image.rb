@@ -11,12 +11,14 @@ class Image < ActiveRecord::Base
   after_save :update_parent
   after_destroy :update_parent
 
+  validates :uid, presence: true, uniqueness: true
+
   def directory_tree(index = false)
     parents = []
-    next_parent = parent
+    next_parent = image? ? parent : self
     while next_parent
       if index
-        parents << next_parent.id.to_s
+        parents << next_parent.uid
       else
         parents << next_parent.path
       end
@@ -28,7 +30,7 @@ class Image < ActiveRecord::Base
   def parent_directory(index = false)
     if index
       return nil if parent_id.nil?
-      parent_id.to_s
+      parent.uid
     else
       return nil if !parent.path.present?
       parent.path
@@ -100,7 +102,7 @@ class Image < ActiveRecord::Base
     return nil unless image?
     File.join(Rails.application.config.x.image_cache_dir,
               self.parent_directory(true),
-              self.id.to_s + '_' +
+              self.uid.to_s + '_' +
               Rails.application.config.x.thumbnail_width.to_s + 'x' +
               Rails.application.config.x.thumbnail_height.to_s +
               File.extname(self.filename))
@@ -111,7 +113,7 @@ class Image < ActiveRecord::Base
     return aws_thumb_url if aws_thumb_url.present? && Rails.application.config.x.use_aws
     path = File.join(Rails.application.config.x.image_cache_path_prefix,
               self.parent_directory(true),
-              self.id.to_s + '_' +
+              self.uid.to_s + '_' +
               Rails.application.config.x.thumbnail_width.to_s + 'x' +
               Rails.application.config.x.thumbnail_height.to_s +
               File.extname(self.filename))
@@ -122,7 +124,7 @@ class Image < ActiveRecord::Base
     return nil unless image?
     File.join(Rails.application.config.x.image_cache_dir,
               self.parent_directory(true),
-              self.id.to_s + '_' +
+              self.uid.to_s + '_' +
                 Rails.application.config.x.hdtv_height.to_s +
                 File.extname(self.filename))
   end
@@ -132,7 +134,7 @@ class Image < ActiveRecord::Base
     return aws_hdtv_url if aws_hdtv_url.present? && Rails.application.config.x.use_aws
     path = File.join(Rails.application.config.x.image_cache_path_prefix,
               self.parent_directory(true),
-              self.id.to_s + '_' +
+              self.uid.to_s + '_' +
                 Rails.application.config.x.hdtv_height.to_s +
                 File.extname(self.filename))
     File.exists?(File.join(Rails.root, 'public', path)) ? path : nil

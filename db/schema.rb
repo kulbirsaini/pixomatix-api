@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150514112024) do
+ActiveRecord::Schema.define(version: 20150515164158) do
 
   create_table "images", force: :cascade do |t|
     t.integer  "parent_id",     limit: 4
@@ -21,13 +21,16 @@ ActiveRecord::Schema.define(version: 20150514112024) do
     t.integer  "height",        limit: 4
     t.integer  "size",          limit: 4
     t.string   "mime_type",     limit: 255
-    t.datetime "created_at",                                null: false
-    t.datetime "updated_at",                                null: false
     t.boolean  "has_galleries", limit: 1,   default: false
     t.boolean  "has_images",    limit: 1,   default: false
+    t.datetime "created_at",                                null: false
+    t.datetime "updated_at",                                null: false
     t.string   "aws_thumb_url", limit: 255
     t.string   "aws_hdtv_url",  limit: 255
+    t.string   "uid",           limit: 255,                 null: false
   end
+
+  add_index "images", ["uid"], name: "index_images_on_uid", using: :btree
 
   create_table "users", force: :cascade do |t|
     t.string   "name",                   limit: 255,                 null: false

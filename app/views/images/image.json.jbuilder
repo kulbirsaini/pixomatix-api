@@ -1,1 +1,1 @@
-json.id @first_image.try(:id)
+json.id @first_image.try(:uid)

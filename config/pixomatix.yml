@@ -4,8 +4,8 @@ default: &default
   hdtv_height: 1080
   image_cache_dir: 'public/cache/' # relative path inside Rails.root
   image_prefix: 'KSC'
-  thumbnail_path_regex: !ruby/regexp /(^[0-9]+)_([0-9]+)x([0-9]+)\.([a-z0-9]+)/i
-  hdtv_path_regex: !ruby/regexp /(^[0-9]+)_([0-9]+)\.([a-z0-9]+)/i
+  thumbnail_path_regex: !ruby/regexp /(^[0-9a-z]{32})_([0-9]+)x([0-9]+)\.([a-z0-9]+)/i
+  hdtv_path_regex: !ruby/regexp /(^[0-9a-z]{32})_([0-9]+)\.([a-z0-9]+)/i
   use_aws: false # If AWS is to be used for images
 
 development:

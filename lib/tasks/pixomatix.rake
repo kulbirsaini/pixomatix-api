@@ -1,12 +1,7 @@
 namespace :pixomatix do
   desc "Populate images once the image root directory is setup in config/pixomatix.yml"
   task populate_images: :environment do
-    Pixomatix::ImageSync.new.populate_images(nil, nil, false, true)
-  end
-
-  desc "Remove existing entries from database and populate images again"
-  task repopulate_images: :environment do
-    Pixomatix::ImageSync.new.populate_images(nil, nil, true, true)
+    Pixomatix::ImageSync.new.populate_images(nil, nil, true)
   end
 
   desc "Run frequently (daily or so) to remove unused thumbnails and hdtv images"

@@ -8,14 +8,22 @@ module Pixomatix
       @directories = directories || Rails.application.config.x.image_root
     end
 
+    def self.unique_id_for_text(data)
+      Digest::MD5.hexdigest(data)
+    end
+
+    def self.unique_id_for_file(filepath)
+      self.unique_id_for_text(filepath + File.read(filepath))
+    end
+
     def self.parse_filename(filename)
       result = filename.scan(Rails.application.config.x.thumbnail_path_regex)[0]
       if result.present?
-        return { type: :thumbnail, id: result[0], width: result[1], height: result[2] }
+        return { type: :thumbnail, uid: result[0], width: result[1], height: result[2] }
       end
       result = filename.scan(Rails.application.config.x.hdtv_path_regex)[0]
       if result.present?
-        return { type: :hdtv, id: result[0], hdtv_height: result[1] }
+        return { type: :hdtv, uid: result[0], hdtv_height: result[1] }
       end
     end
 
@@ -30,8 +38,8 @@ module Pixomatix
           filepath = File.join(directory, filename)
           keep_file = false
           if result = self.parse_filename(filename)
-            if image = Image.where(id: result[:id]).first
-              keep_file = true if image.send(result[:type].to_s + '_path') == filepath
+            if image = Image.where(uid: result[:uid]).first
+              keep_file = true if image.send("absolute_#{result[:type].to_s}_path") == filepath
             end
           end
           unless keep_file
@@ -185,63 +193,86 @@ module Pixomatix
       self.class.info("ImageSync::rename_images_from_directory Finish #{directory}", msg_to_stdout)
     end
 
-    def populate_images(directory = nil, parent = nil, force_populate = false, msg_to_stdout = false)
-      self.class.info("ImageSync::populate_images Start", msg_to_stdout) unless parent
+    def create_gallery(directory, parent_gallery)
+      gallery = Image.where(path: directory, parent: parent_gallery).first_or_initialize
+      gallery.uid = self.class.unique_id_for_text(File.join(parent_gallery.try(:directory_tree).to_s, directory))
+      gallery
+    end
+
+    def populate_images(directory = nil, parent_gallery = nil, msg_to_stdout = false)
+      self.class.info("ImageSync::populate_images Start", msg_to_stdout) unless parent_gallery
       if directory
-        parent = Image.where(path: directory, parent: parent).first_or_initialize
-        parent.save
-        populate_images_from_directory(directory, parent, force_populate, msg_to_stdout)
-        directory = File.join(parent.directory_tree, directory) if parent
-        self.class.get_sub_directories(directory).each do |sub_directory|
-          populate_images(sub_directory, parent, force_populate, msg_to_stdout)
+        cur_directory = parent_gallery.present? ? File.join(parent_gallery.directory_tree, directory) : directory
+        gallery = create_gallery(directory, parent_gallery)
+        unless gallery.save
+          self.class.info("ImageSync::populate_images no gallery for #{directory}, parent_id: #{parent_gallery.id}, errors: #{gallery.errors.messages}", msg_to_stdout)
+          return
         end
-        if parent.children.count == 0 && parent.images.count == 0
-          self.class.info("ImageSync::populate_images Removed parent : #{parent.id}", msg_to_stdout)
-          parent.destroy
+        populate_images_from_directory(directory, parent_gallery, msg_to_stdout)
+        self.class.get_sub_directories(cur_directory).each do |sub_directory|
+          populate_images(sub_directory, gallery, msg_to_stdout)
+        end
+        if gallery.children.count == 0 && gallery.images.count == 0
+          self.class.info("ImageSync::populate_images Removed gallery: #{gallery.id}", msg_to_stdout)
+          gallery.destroy
         end
       else
         @directories.each do |directory|
-          parent = Image.where(path: directory).first_or_initialize
-          parent.save
-          populate_images_from_directory(directory, parent, force_populate, msg_to_stdout)
-          self.class.get_sub_directories(directory).each do |sub_directory|
-            populate_images(sub_directory, parent, force_populate, msg_to_stdout)
+          gallery = create_gallery(directory, parent_gallery)
+          unless gallery.save
+            self.class.info("ImageSync::populate_images no gallery for #{directory}, parent_id: #{parent_gallery.id}, errors: #{gallery.errors.messages}", msg_to_stdout)
+            return
           end
-          if parent.children.count == 0 && parent.images.count == 0
-            self.class.info("ImageSync::populate_images Removed parent : #{parent.id}", msg_to_stdout)
-            parent.destroy
+          populate_images_from_directory(directory, parent_gallery, msg_to_stdout)
+          self.class.get_sub_directories(directory).each do |sub_directory|
+            populate_images(sub_directory, gallery, msg_to_stdout)
+          end
+          if gallery.children.count == 0 && gallery.images.count == 0
+            self.class.info("ImageSync::populate_images Removed gallery: #{gallery.id}", msg_to_stdout)
+            gallery.destroy
           end
         end
       end
-      self.class.info("ImageSync::populate_images Finish", msg_to_stdout) unless parent.parent
+      self.class.info("ImageSync::populate_images Finish", msg_to_stdout) unless parent_gallery
     end
 
-    def populate_images_from_directory(directory, parent, force_populate = false, msg_to_stdout = false)
-      directory = File.join(parent.directory_tree, directory) if parent
-      self.class.info("ImageSync::populate_images_from_directory Start for #{directory}", msg_to_stdout)
-      images_in_dir = Dir.entries(directory).select{ |filename| self.class.is_image_extension?(filename) }.sort
-      if force_populate
-        images_to_create = images_in_dir
-        images_to_delete = Image.where(parent: parent).where.not(filename: nil).select(:filename).collect(&:filename)
-      else
-        images_in_db = Image.where(parent: parent).where.not(filename: nil).select(:filename).collect(&:filename)
-        images_to_create = images_in_dir - images_in_db
-        images_to_delete = images_in_db - images_in_dir
+    def populate_images_from_directory(directory, parent_gallery, msg_to_stdout = false)
+      gallery = create_gallery(directory, parent_gallery)
+      unless gallery.save
+        self.class.info("ImageSync::populate_images_from_directory no gallery for #{directory}, parent_id: #{parent_gallery.try(:id)}, errors: #{gallery.errors.messages}", msg_to_stdout)
+        return
       end
-      Image.where(filename: images_to_delete, parent: parent).each do |image|
+      directory = gallery.directory_tree
+      self.class.info("ImageSync::populate_images_from_directory Start for #{directory}, parent_id: #{parent_gallery.try(:id)}", msg_to_stdout)
+      images_in_dir = Dir.entries(directory)
+                      .select{ |filename| self.class.is_image_extension?(filename) }
+                      .sort
+                      .inject({}) do |result, filename|
+                        filepath = File.join(directory, filename)
+                        result[self.class.unique_id_for_file(filepath)] = { filename: filename, filepath: filepath }
+                        result
+                      end
+
+      gallery.images.where.not(uid: images_in_dir.keys).each do |image|
         self.class.info("ImageSync::populate_images_from_directory Deleted Image: #{image.id} #{File.join(directory, image.filename)}", msg_to_stdout)
         image.destroy
       end
-
-      images_to_create.each do |filename|
-        filepath = File.join(directory, filename)
-        image = MiniMagick::Image.open(filepath)
-        new_image = Image.where(filename: filename, width: image.width, height: image.height, size: image.size, parent: parent, mime_type: image.mime_type).first_or_initialize
-        new_image.save
-        self.class.info("ImageSync::populate_images_from_directory Added Image: #{new_image.id} #{filepath}", msg_to_stdout)
-        image.destroy!
+      images_in_dir.each do |uid, data|
+        new_image = gallery.images.where(uid: uid).first
+        if new_image
+          new_image.filename = data[:filename]
+        else
+          image = MiniMagick::Image.open(data[:filepath])
+          new_image = gallery.images.where(filename: data[:filename], uid: uid, width: image.width, height: image.height, size: image.size, mime_type: image.mime_type).first_or_initialize
+          image.destroy!
+        end
+        if new_image.save
+          self.class.info("ImageSync::populate_images_from_directory Added Image: #{new_image.id} #{data[:filepath]}", msg_to_stdout)
+        else
+          self.class.info("ImageSync::populate_images_from_directory Error while adding image #{data[:filepath]}, errors: #{new_image.errors.messages}", msg_to_stdout)
+        end
       end
-      self.class.info("ImageSync::populate_images_from_directory Finish for #{directory} Created: #{images_to_create.count} Deleted: #{images_to_delete.count}", msg_to_stdout)
+      self.class.info("ImageSync::populate_images_from_directory Finish for #{directory} Total: #{images_in_dir.count}", msg_to_stdout)
     end
 
     def self.is_image_extension?(filename)

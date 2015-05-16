@@ -85,14 +85,6 @@ Recursively scan `image_root` directories specified in `config/pixomatix.yml` an
 rake pixomatix:populate_images
 ```
 
-#### Repopulate Images
-
-This task will flush DB entries and will pouplate database again with fresh data. It's not really required unless you want to reset all Image IDs.
-
-```ruby
-rake pixomatix:repopulate_images
-```
-
 #### Generate Thumbnails
 
 Generate thumbnails for all the populated images as per the specifications mentioned in `config/pixomatix.yml`. It won't generate thumbnails which exist already.

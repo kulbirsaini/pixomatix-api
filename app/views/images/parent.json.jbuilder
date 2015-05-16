@@ -1,1 +1,1 @@
-json.parent_id @parent.try(:id)
+json.parent_id @parent.try(:uid)
