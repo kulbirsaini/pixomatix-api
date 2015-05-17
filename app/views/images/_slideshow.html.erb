@@ -1,6 +1,12 @@
 <div class="slideshow wireframe">
   <div class="slides" ng-swipe-left="goToNextImage()" ng-swipe-right="goToPreviousImage()">
-    <img ng-src="{{getCurrentImage()[quality]}}" ng-hide="!getCurrentImage()" ng-class="isOddAngleRotation() ? 'rotated-odd' : ''" ng-style="{ 'width': rotatedWidth, '-webkit-transform': transformStyle, '-ms-transform': transformStyle, '-o-transform': transformStyle, transform: transformStyle }" class="current-img img-responsive" />
+    <img class="current-img img-responsive"
+         ng-src="{{getCurrentImage()[quality]}}"
+         ng-show="!loading && getCurrentImage()"
+         ng-class="isOddAngleRotation() ? 'rotated-odd' : ''"
+         ng-style="{ 'width': rotatedWidth, '-webkit-transform': transformStyle, '-ms-transform': transformStyle, '-o-transform': transformStyle, transform: transformStyle }"
+         imageonload="loaded()" />
+    <%= image_tag('loading.gif', alt: 'Loading...', class: 'current-img img-responsive', 'ng-show': 'loading') %>
     <img ng-src="{{getNextImage()[quality]}}" ng-hide="true" />
     <img ng-src="{{getLastImage()[quality]}}" ng-hide="true" />
     <img ng-src="{{getPreviousImage()[quality]}}" ng-hide="true" />

@@ -52,12 +52,13 @@ galleryControllers.controller('SlideshowCtrl', ['$scope', '$route', '$routeParam
       $scope.rotatedWidth = null;
       $scope.images = [];
       $scope.quality = 'hdtv_path';
-      $scope.circular = 'yes';
+      $scope.circular = 'no';
       $scope.fadeOutTime = 300;
       $scope.leftOffset = '0px';
       $scope.lastRoute = $route.current;
       $scope.thumbnail_width = 105; //with margin/padding
       $scope.slide_height_padding = 150; //with margin/padding
+      $scope.loading = true;
     };
 
     $scope.getBodyWidth = function(){
@@ -157,11 +158,13 @@ galleryControllers.controller('SlideshowCtrl', ['$scope', '$route', '$routeParam
     };
 
     $scope.goToImage = function(id){
+      $scope.loading = true;
       $scope.setIndexByImageId(id);
       $location.path('/gallery/' + $scope.gallery_id + '/slideshow/' + id);
     };
 
     $scope.goToImageAtIndex = function(index){
+      if (index === $scope.currentIndex){ return; }
       var image = $scope.getImageAtIndex(index);
       if (image !== null && image.id !== null){
         $scope.goToImage(image.id);
@@ -232,6 +235,10 @@ galleryControllers.controller('SlideshowCtrl', ['$scope', '$route', '$routeParam
 
     $scope.isLastButtonDisabled = function(){
       return $scope.circular == "no" && $scope.getLastIndex() == $scope.currentIndex;
+    };
+
+    $scope.loaded = function(){
+      $scope.loading = false;
     };
 
     //Handle Keypress

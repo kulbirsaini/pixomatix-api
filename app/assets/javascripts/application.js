@@ -21,3 +21,4 @@
 //= require angular/application
 //= require angular/controllers
 //= require angular/services
+//= require angular/directives

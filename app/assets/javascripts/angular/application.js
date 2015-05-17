@@ -3,6 +3,7 @@ var galleryApp = angular.module("GalleryApp", [
   'ngTouch',
   'galleryControllers',
   'galleryServices',
+  'galleryDirectives',
 ]);
 
 galleryApp.config(['$routeProvider',
