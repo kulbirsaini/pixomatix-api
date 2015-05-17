@@ -3,6 +3,7 @@ class ImagesController < ApplicationController
 
   before_action :set_image, only: [:show, :download, :galleries, :images, :image, :parent]
   before_action :ensure_json_request, only: [:show]
+  before_action :set_cors_request_header, except: [:download]
 
   # GET /images.json
   def index
@@ -75,5 +76,9 @@ class ImagesController < ApplicationController
     def ensure_json_request
       return if params[:format] == "json" || request.headers["Accept"] =~ /json/
       render :nothing => true, :status => 406
+    end
+
+    def set_cors_request_header
+      response.headers['Access-Control-Allow-Origin'] = '*'
     end
 end
