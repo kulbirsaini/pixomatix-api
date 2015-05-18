@@ -1,11 +1,4 @@
 Rails.application.routes.draw do
-  devise_for :users, controllers: { registrations: 'registrations' }
-  resources :images, only: []  do
-    member do
-      get :original
-      get :download
-    end
-  end
   resources :home, only: [:index]
   root 'home#index'
 

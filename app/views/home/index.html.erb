@@ -1,7 +1,3 @@
-<div ng-view></div>
-<script type="text/ng-template" id="gallery.html">
-  <%= render partial: "home/gallery" %>
-</script>
-<script type="text/ng-template" id="slideshow.html">
-  <%= render partial: "home/slideshow" %>
-</script>
+<% cache do %>
+  <%= Markdown.new(File.read(File.join(Rails.root, 'Readme.md'))).to_html.html_safe %>
+<% end %>
