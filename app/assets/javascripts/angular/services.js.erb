@@ -2,9 +2,10 @@ var galleryServices = angular.module("galleryServices", ['ngResource']);
 
 galleryServices.factory("Gallery", ["$resource", "$routeParams",
   function($resouce, $routeParams){
+    var headers = { 'Accept' : "application/vnd.pixomatix.<%= Rails.application.config.x.api_version %>" };
     var resource = $resouce("<%= Rails.application.config.x.api_url %>/images/:id/:operation.json", { id: '@id' }, {
-      get: { method: 'GET', isArray: false },
-      query: { method: 'GET', isArray: true }
+      get: { method: 'GET', isArray: false, headers: headers },
+      query: { method: 'GET', isArray: true, headers: headers }
     });
 
     resource.getCollection = function(params, success, failure){

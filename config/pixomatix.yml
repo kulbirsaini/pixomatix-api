@@ -7,25 +7,30 @@ default: &default
   thumbnail_path_regex: !ruby/regexp /(^[0-9a-z]{32})_([0-9]+)x([0-9]+)\.([a-z0-9]+)/i
   hdtv_path_regex: !ruby/regexp /(^[0-9a-z]{32})_([0-9]+)\.([a-z0-9]+)/i
   use_aws: false # If AWS is to be used for images
-  api_url: 'http://demo.pixomatix.com' # API to use to show galleries and images. Should be either blank or URL.
+  api_url: 'http://demo.pixomatix.com/api' # API to use to show galleries and images. Should be either blank or URL.
+  api_version: 'v1'
 
 development:
   <<: *default
   image_root: ['/path/to/your/pics/dir/', '/vacation/pics/']
   use_aws: false
-  api_url: ''
+  api_url: '/api'
+  api_version: 'v1'
 
 test:
   <<: *default
   image_root: []
-  api_url: ''
+  api_url: '/api'
+  api_version: 'v1'
 
 stage:
   <<: *default
   image_root: []
-  api_url: ''
+  api_url: '/api'
+  api_version: 'v1'
 
 production:
   <<: *default
   image_root: []
-  api_url: ''
+  api_url: '/api'
+  api_version: 'v1'

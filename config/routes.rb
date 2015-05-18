@@ -1,16 +1,35 @@
 Rails.application.routes.draw do
   devise_for :users, controllers: { registrations: 'registrations' }
-  resources :images, only: [:index, :show]  do
+  resources :images, only: []  do
     member do
-      get :galleries
-      get :images
-      get :image
       get :original
-      get :parent
       get :download
     end
   end
-  root 'images#index'
+  resources :home, only: [:index]
+  root 'home#index'
+
+  namespace :api, defaults: { format: :json } do
+    scope module: :v1, constraints: Pixomatix::ApiConstraints.new(version: 1, default: true) do
+      devise_scope :user do
+        match '/sessions' => 'sessions#create', :via => :post
+        match '/sessions' => 'sessions#destroy', :via => :delete
+      end
+      resources :users, only: [:create]
+      match '/users' => 'users#show', :via => :get
+      match '/users' => 'users#update', :via => :put
+      match '/users' => 'users#destroy', :via => :delete
+
+      resources :images, only: [:index, :show]  do
+        member do
+          get :galleries
+          get :images
+          get :image
+          get :parent
+        end
+      end
+    end
+  end
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 

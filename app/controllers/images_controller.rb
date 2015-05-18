@@ -1,24 +1,11 @@
 class ImagesController < ApplicationController
-  include ImagesHelper
-
-  before_action :set_image, only: [:show, :download, :galleries, :images, :image, :parent]
-  before_action :ensure_json_request, only: [:show]
-  before_action :set_cors_request_header, except: [:download]
-
-  # GET /images.json
-  def index
-    @images = Image.root
-  end
-
-  def show
-  end
+  before_action :set_image
 
   def download
     send_file @image.original_path, type: @image.mime_type, disposition: 'attachment'
   end
 
   def original
-    @image = Image.where(uid: params[:id]).first
     image_path = @image.original_path || get_asset_path("default_gallery_image_original.png")
 
     send_params = { type: @image.mime_type || 'image/png', disposition: :inline, stream: true, filename: "#{@image.uid}#{File.extname(image_path)}" }
@@ -46,22 +33,6 @@ class ImagesController < ApplicationController
     end
   end
 
-  def galleries
-    @galleries = @image.children
-  end
-
-  def images
-    @images = @image.images.ordered
-  end
-
-  def image
-    @first_image = @image.images.ordered.first
-  end
-
-  def parent
-    @parent = @image.parent_with_galleries
-  end
-
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_image
@@ -70,15 +41,6 @@ class ImagesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def image_params
-      params.require(:image).permit(:path, :filename, :width, :height, :size, :parent_id, :type, :uid)
-    end
-
-    def ensure_json_request
-      return if params[:format] == "json" || request.headers["Accept"] =~ /json/
-      render :nothing => true, :status => 406
-    end
-
-    def set_cors_request_header
-      response.headers['Access-Control-Allow-Origin'] = '*'
+      params.require(:image).permit(:uid)
     end
 end
