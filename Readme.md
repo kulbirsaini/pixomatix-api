@@ -2,11 +2,11 @@
 
 [Pixomatix-Api](https://github.com/kulbirsaini/pixomatix-api) is a Photo Gallery API powered by [Ruby on Rails](http://rubyonrails.org/) (4.2.1). It supports recursive scanning, thumbnail generation and resizing images to fit HDTV screens.
 
-**Demo** : [demo.pixomatix.com](http://demo.pixomatix.com/)
+**Demo** : [api.pixomatix.com](http://api.pixomatix.com/)
 
 ## Front End Implementations
 
-- AngularJS : [Pixomatix-Angular](https://github.com/kulbirsaini/pixomatix-angular)
+- AngularJS : [Pixomatix-Angular](https://github.com/kulbirsaini/pixomatix-angular) ([Demo](http://angular.pixomatix.com/))
 
 
 ## Configuration
