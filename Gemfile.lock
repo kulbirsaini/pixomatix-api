@@ -91,6 +91,7 @@ GEM
       multi_json (~> 1.0)
     json (1.8.2)
     kgio (2.9.3)
+    libv8 (3.16.14.7)
     loofah (2.0.1)
       nokogiri (>= 1.5.9)
     mail (2.6.3)
@@ -140,6 +141,7 @@ GEM
     raindrops (0.13.0)
     rake (10.4.2)
     rdiscount (2.1.8)
+    ref (1.0.5)
     responders (2.1.0)
       railties (>= 4.2.0, < 5)
     rmagick (2.14.0)
@@ -161,6 +163,9 @@ GEM
       colorize (>= 0.7.0)
       net-scp (>= 1.1.2)
       net-ssh (>= 2.8.0)
+    therubyracer (0.12.2)
+      libv8 (~> 3.16.14.0)
+      ref
     thin (1.6.3)
       daemons (~> 1.0, >= 1.0.9)
       eventmachine (~> 1.0)
@@ -203,6 +208,7 @@ DEPENDENCIES
   rmagick
   sass-rails
   spring
+  therubyracer
   thin
   uglifier
   unicorn

@@ -5,6 +5,7 @@ gem 'mysql2'
 gem 'jbuilder', '~> 2.0'
 gem 'uglifier'
 gem 'sass-rails'
+gem 'therubyracer'
 
 # Authentication
 gem 'devise'
