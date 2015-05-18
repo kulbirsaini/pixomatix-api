@@ -4,6 +4,7 @@ gem 'rails', '4.2.1'
 gem 'mysql2'
 gem 'jbuilder', '~> 2.0'
 gem 'uglifier'
+gem 'sass-rails'
 
 # Authentication
 gem 'devise'
