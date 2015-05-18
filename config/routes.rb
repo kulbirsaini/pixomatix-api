@@ -2,6 +2,13 @@ Rails.application.routes.draw do
   resources :home, only: [:index]
   root 'home#index'
 
+  resources :images, only: [] do
+    member do
+      get :original
+      get :download
+    end
+  end
+
   namespace :api, defaults: { format: :json } do
     scope module: :v1, constraints: Pixomatix::ApiConstraints.new(version: 1, default: true) do
       devise_scope :user do
