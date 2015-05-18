@@ -133,13 +133,20 @@ This is basically a combined task for above mentioned two AWS S3 sync tasks. It'
 rake pixomatix:aws_sync
 ```
 
+## API
+
+**URL** : http://demo/pixomatix.com/api/
+
+**Current Version** : V1
+
+
 ## API Endpoints
 
-* `/images.json` => Array of gallery objects
+* `/api/images.json` => Array of gallery objects
 
 ```javascript
   [
-    { "id":1,
+    { "id":28aa708183ae9d042e3231df5d02b7ee,
       "caption":"AllPictures",
       "vertical":false,
       "is_image":false,
@@ -147,16 +154,16 @@ rake pixomatix:aws_sync
       "has_galleries":true,
       "has_images":false,
       "has_parent":false,
-      "thumbnail_path":"/images/1/thumbnail"
+      "thumbnail_path":"/images/28aa708183ae9d042e3231df5d02b7ee/thumbnail"
     },
     ...
   ]
 ```
 
-* `/images/:id.json` => Gallery Object
+* `/api/images/:id.json` => Gallery Object
 
 ```javascript
-  { "id":2,
+  { "id":28aa708183ae9d042e3231df5d02b7ee,
     "caption":"Paris, France",
     "vertical":false,
     "is_image":false,
@@ -164,16 +171,16 @@ rake pixomatix:aws_sync
     "has_galleries":false,
     "has_images":true,
     "has_parent":true,
-    "parent_id":1,
-    "thumbnail_path":"/images/2/thumbnail"
+    "parent_id":28aa708183ae9d042e3231df5d02b7ee,
+    "thumbnail_path":"/images/28aa708183ae9d042e3231df5d02b7ee/thumbnail"
   }
 ```
 
-* `/images/:id/images.json` => Array of image objects in a gallery
+* `/api/images/:id/images.json` => Array of image objects in a gallery
 
 ```javascript
   [
-    { "id":16345,
+    { "id":28aa708183ae9d042e3231df5d02b7ee,
       "caption":null,
       "vertical":false,
       "is_image":true,
@@ -181,20 +188,20 @@ rake pixomatix:aws_sync
       "has_galleries":false,
       "has_images":false,
       "has_parent":true,
-      "parent_id":2,
-      "thumbnail_path":"/images/16345/thumbnail",
-      "hdtv_path":"/images/16345/hdtv",
-      "original_path":"/images/16345/original"
+      "parent_id":"28aa708183ae9d042e3231df5d02b7ee",
+      "thumbnail_path":"/images/28aa708183ae9d042e3231df5d02b7ee/thumbnail",
+      "hdtv_path":"/images/28aa708183ae9d042e3231df5d02b7ee/hdtv",
+      "original_path":"/images/28aa708183ae9d042e3231df5d02b7ee/original"
     },
     ...
   ]
 ```
 
-* `/images/:id/galleries.json` => Array of gallery objects in a gallery
+* `/api/images/:id/galleries.json` => Array of gallery objects in a gallery
 
 ```javascript
   [
-    { "id":2,
+    { "id":"28aa708183ae9d042e3231df5d02b7ee",
       "caption":"Paris, France",
       "vertical":false,
       "is_image":false,
@@ -202,14 +209,14 @@ rake pixomatix:aws_sync
       "has_galleries":false,
       "has_images":true,
       "has_parent":true,
-      "parent_id":1,
+      "parent_id":"28aa708183ae9d042e3231df5d02b7ee",
       "thumbnail_path":"/images/2/thumbnail"
     },
     ...
   ]
 ```
 
-* `/images/:id/image.json` => First image id in a gallery if present
+* `/api/images/:id/image.json` => First image id in a gallery if present
 
 ```javascript
   {
@@ -221,15 +228,15 @@ OR
 
 ```javascript
   {
-    "id":3
+    "id":"28aa708183ae9d042e3231df5d02b7ee"
   }
 ```
 
-* `/images/:id/parent.json` => Parent id which has galleries (may be parent of parent and so on)
+* `/api/images/:id/parent.json` => Parent id which has galleries (may be parent of parent and so on)
 
 ```javascript
   {
-    "parent_id":1
+    "parent_id":"28aa708183ae9d042e3231df5d02b7ee"
   }
 ```
 
