@@ -1,31 +1,26 @@
 class Api::V1::UsersController < Api::V1::BaseController
-  before_filter :authenticate_user!, :except => [:create, :show]
 
-  def show
-    render :json => {:info => "Current User", :user => current_user}, :status => 200
-  end
-
-  def create
-    @user = User.create(user_params)
-    if @user.valid?
-      sign_in(@user)
-      respond_with @user, :location => api_users_path
+  def update
+    if @current_user.update(update_params)
+      @current_user.clear_tokens if update_params[:password].present?
+      render_message({ user: @current_user, notice: scoped_t('users.update_success') })
     else
-      respond_with @user.errors, :location => api_users_path
+      render_message({ error: @current_user.errors.full_messages, notice: scoped_t('users.update_failed'), status: :unprocessable_entity })
     end
   end
 
-  def update
-    respond_with :api, User.update(current_user.id, user_params)
-  end
-
   def destroy
-    respond_with :api, User.find(current_user.id).destroy
+    @current_user.destroy
+    if @current_user.destroyed?
+      render_message({ notice: scoped_t('users.cancel_success') })
+    else
+      render_message({ error: @current_user.errors.full_messages, notice: scoped_t('users.cancel_failed'), status: :unprocessable_entity })
+    end
   end
 
   private
 
-  def user_params
-    params.require(:user).permit(:name, :email, :password, :password_confirmation)
+  def update_params
+    params[:user].present? ? params.require(:user).permit(:name, :password, :password_confirmation) : {}
   end
 end

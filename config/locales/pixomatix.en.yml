@@ -1,0 +1,41 @@
+# Locale for pixomatix api
+
+en:
+  api:
+    v1:
+      base:
+        invalid_session: 'Invalid Session'
+        internal_server_error: 'Internal Server Error'
+      auth:
+        registered_already: 'User already registered'
+        registered_and_unconfirmed: 'User already registered but not confirmed. Check your email to confirm account'
+        registered_successfully: 'User registered successfully'
+        registration_failed: 'User registration failed'
+        user_locked: 'User account is locked'
+        user_not_confirmed: 'User account is not confimred. Please check confirmation email for instructions'
+        login_success: 'Logged in successfully'
+        invalid_credentials: 'Invalid email or password'
+        logout_success: 'Logged out successfully'
+        logout_failed: 'Failed to logout'
+        token_valid: 'Valid token'
+        token_invalid: 'Invalid token'
+        reset_password_sent: 'Password reset instructions sent via email'
+        cannot_reset_password: 'Invalid email or password can not be reset'
+        password_reset_success: 'Password reset successfully. Please login'
+        password_reset_failed: 'Failed to reset password'
+        invalid_email_or_password_token: 'Invalid email or reset password token'
+        unlock_sent: 'Unlock instructions sent via email'
+        cannot_unlock: 'Invalid email or user not locked'
+        unlock_success: 'User unlocked successfully'
+        unlock_failed: 'Failed to unlock user'
+        invalid_email_or_unlock_token: 'Invalid email or unlock token'
+        confirmation_sent: 'Confirmation instructions sent via email'
+        cannot_confirm: 'Invalid email or user already confirmed'
+        confirm_success: 'User confirmed successfully'
+        confirm_failed: 'Failed to confirm user'
+        invalid_email_or_confirmation_token: 'Invalid email or confirmation token'
+      users:
+        update_success: 'User updated successfully'
+        update_failed: 'Failed to update user'
+        cancel_success: 'User registration cancelled successfully'
+        cancel_failed: 'Failed to cancel user registration'
