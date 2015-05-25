@@ -12,14 +12,6 @@ Rails.application.routes.draw do
   namespace :api, defaults: { format: :json } do
     scope module: :v1, constraints: Pixomatix::ApiConstraints.new(version: 1, default: true) do
 
-      resources :users, only: [] do
-        collection do
-          put :update
-          patch :update
-          delete :destroy, as: :cancel
-        end
-      end
-
       resources :auth, controller: :auth, only: [] do
         collection do
           post :register
@@ -36,6 +28,14 @@ Rails.application.routes.draw do
 
           get :confirm, action: :confirmation_instructions, as: :confirmation_instructions
           post :confirm
+        end
+      end
+
+      resources :users, only: [] do
+        collection do
+          put :update
+          patch :update
+          delete :destroy, as: :cancel
         end
       end
 

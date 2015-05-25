@@ -1,7 +1,6 @@
 class Api::V1::AuthController < Api::V1::BaseController
   before_action :authenticate!, except: [ :register, :login, :validate, :reset_password_instructions, :reset_password, :unlock_instructions, :unlock, :confirmation_instructions, :confirm ]
-  before_action :set_user, only: [ :register, :login, :reset_password_instructions, :unlock_instructions, :confirmation_instructions ]
-  before_action :set_user_from_request, only: [ :reset_password, :unlock, :confirm ]
+  before_action :set_user, only: [ :register, :login, :reset_password_instructions, :reset_password, :unlock_instructions, :unlock, :confirmation_instructions, :confirm ]
 
   def register
     if @user
@@ -125,12 +124,16 @@ class Api::V1::AuthController < Api::V1::BaseController
 
   private
 
+  def set_user_from_params
+    User.where(email: user_params[:email]).first
+  end
+
   def set_user_from_request
-    @user = User.where(email: request.headers['X-Access-Email']).first
+    User.where(email: request.headers['X-Access-Email']).first
   end
 
   def set_user
-    @user = User.where(email: user_params[:email]).first
+    @user = set_user_from_request || set_user_from_params
   end
 
   def reset_password_params

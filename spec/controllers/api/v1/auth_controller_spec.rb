@@ -15,11 +15,10 @@ end
 
 RSpec.describe Api::V1::AuthController, type: :controller do
   context "request with unsupported locale" do
-    it "responds with internal server error" do
+    it "responds with unprocessable entity" do
       request.headers['Accept-Language'] = 'es-pe'
       get :register
-      expect(response).to have_http_status(500)
-      expect(notice).to eq(scoped_t('base.internal_server_error'))
+      expect(response).to have_http_status(422)
     end
   end
 

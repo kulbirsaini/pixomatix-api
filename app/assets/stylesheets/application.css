@@ -16,6 +16,10 @@ body {
   background: gray;
 }
 
+a {
+  text-decoration: none;
+}
+
 #container {
   background: whitesmoke;
   margin: 20px auto;
@@ -33,14 +37,18 @@ pre {
   padding: 10px;
 }
 
-p code {
+p code, li code {
   background: lightgray;
   border-radius: 3px;
   padding: 1px 5px;
   color: brown;
 }
 
-ul + pre, ul + pre + p + pre {
+ul {
+  padding-left: 15px;
+}
+
+ul + pre, ul + pre + pre, ul + pre + p + pre {
   margin-left: 20px;
 }
 

@@ -26,11 +26,11 @@ class Api::V1::BaseController < ActionController::Base
   end
 
   def get_locale_from_request
-    (request.headers['Accept-Language'] || '').scan(/^([a-z]{2})-/).flatten.first
+    @current_locale ||= (request.headers['Accept-Language'] || '').scan(/^([a-z]{2})-/).flatten.first
   end
 
   def set_locale
-    I18n.locale = get_locale_from_request || I18n.default_locale
+    I18n.locale = I18n.available_locales.member?(get_locale_from_request) ? get_locale_from_request : I18n.default_locale
   end
 
   def set_cors_request_header
