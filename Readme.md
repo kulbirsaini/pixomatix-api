@@ -217,7 +217,7 @@ curl -H 'Accept: application/vnd.pixomatix.v1' \
      -H 'Accept-Language: en-US' \
      -w '\nResponse Code: %{http_code}\n' \
      -d '{"user":{"email":"test@example.com","password":"1234568","password_confirmation":"1234568","name":"Kulbir Saini"}}' \
-     -X POST http://localhost:1234/api/auth/register
+     -X POST http://api.pixomatix.com/api/auth/register
 ```
 
 #### Response when registered successfully
@@ -253,7 +253,7 @@ curl -H 'Accept: application/vnd.pixomatix.v1' \
      -H 'Accept-Language: en-US' \
      -w '\nResponse Code: %{http_code}\n' \
      -d '{"user":{"email":"test@example.com","password":"1234568"}}' \
-     -X POST http://localhost:1234/api/auth/login
+     -X POST http://api.pixomatix.com/api/auth/login
 ```
 
 #### Response when user is locked
@@ -296,7 +296,7 @@ curl -H 'Accept: application/vnd.pixomatix.v1' \
      -H 'X-Access-Token: 5a0dd200dccc9a87f83fcad30e1ae78b' \
      -H 'X-Access-Email: test@example.com' \
      -w '\nResponse Code: %{http_code}\n' \
-     -X GET http://localhost:1234/api/auth/user
+     -X GET http://api.pixomatix.com/api/auth/user
 ```
 
 
@@ -312,7 +312,7 @@ curl -H 'Accept: application/vnd.pixomatix.v1' \
      -H 'X-Access-Token: 5a0dd200dccc9a87f83fcad30e1ae78b' \
      -H 'X-Access-Email: test@example.com' \
      -w '\nResponse Code: %{http_code}\n' \
-     -X GET http://localhost:1234/api/auth/validate
+     -X GET http://api.pixomatix.com/api/auth/validate
 ```
 
 
@@ -328,7 +328,7 @@ curl -H 'Accept: application/vnd.pixomatix.v1' \
      -H 'X-Access-Token: 5a0dd200dccc9a87f83fcad30e1ae78b' \
      -H 'X-Access-Email: test@example.com' \
      -w '\nResponse Code: %{http_code}\n' \
-     -X DELETE http://localhost:1234/api/auth/logout
+     -X DELETE http://api.pixomatix.com/api/auth/logout
 ```
 
 
@@ -343,7 +343,7 @@ curl -H 'Accept: application/vnd.pixomatix.v1' \
      -H 'Accept-Language: en-US' \
      -H 'X-Access-Email: test@example.com' \
      -w '\nResponse Code: %{http_code}\n' \
-     -X GET http://localhost:1234/api/auth/reset_password
+     -X GET http://api.pixomatix.com/api/auth/reset_password
 ```
 
 
@@ -360,7 +360,7 @@ curl -H 'Accept: application/vnd.pixomatix.v1' \
      -H 'X-Access-Reset-Password-Token: 31b4aa71ea72c8ae3d9a37245e8569f1' \
      -w '\nResponse Code: %{http_code}\n' \
      -d '{"user":{"password":"1234568","password_confirmation":"1234568"}}' \
-     -X POST http://localhost:1234/api/auth/reset_password
+     -X POST http://api.pixomatix.com/api/auth/reset_password
 ```
 
 
@@ -375,7 +375,7 @@ curl -H 'Accept: application/vnd.pixomatix.v1' \
      -H 'Accept-Language: en-US' \
      -H 'X-Access-Email: test@example.com' \
      -w '\nResponse Code: %{http_code}\n' \
-     -X GET http://localhost:1234/api/auth/unlock
+     -X GET http://api.pixomatix.com/api/auth/unlock
 ```
 
 
@@ -391,7 +391,7 @@ curl -H 'Accept: application/vnd.pixomatix.v1' \
      -H 'X-Access-Email: test@example.com' \
      -H 'X-Access-Unlock-Token: 14fa864af566d03e7a35ef6c6e1e4bcf' \
      -w '\nResponse Code: %{http_code}\n' \
-     -X POST http://localhost:1234/api/auth/unlock
+     -X POST http://api.pixomatix.com/api/auth/unlock
 ```
 
 
@@ -406,7 +406,7 @@ curl -H 'Accept: application/vnd.pixomatix.v1' \
      -H 'Accept-Language: en-US' \
      -H 'X-Access-Email: test@example.com' \
      -w '\nResponse Code: %{http_code}\n' \
-     -X GET http://localhost:1234/api/auth/confirm
+     -X GET http://api.pixomatix.com/api/auth/confirm
 ```
 
 
@@ -422,7 +422,7 @@ curl -H 'Accept: application/vnd.pixomatix.v1' \
      -H 'X-Access-Email: test@example.com' \
      -H 'X-Access-Confirmation-Token: f5884aec88d513c2b3b2ef16b41210b8' \
      -w '\nResponse Code: %{http_code}\n' \
-     -X POST http://localhost:1234/api/auth/confirm
+     -X POST http://api.pixomatix.com/api/auth/confirm
 ```
 
 
@@ -441,7 +441,7 @@ curl -H 'Accept: application/vnd.pixomatix.v1' \
      -H 'X-Access-Token: a4c4e6734f5050e6460ed91c608fc147' \
      -w '\nResponse Code: %{http_code}\n' \
      -d '{"user":{"password":"1234568","password_confirmation":"1234568","name":"Yo Test!"}}' \
-     -X PUT http://localhost:1234/api/users
+     -X PUT http://api.pixomatix.com/api/users
 ```
 
 
@@ -457,7 +457,7 @@ curl -H 'Accept: application/vnd.pixomatix.v1' \
      -H 'X-Access-Email: test@example.com' \
      -H 'X-Access-Token: ff7c0ee84d6b08c2edfd1938776865cc' \
      -w '\nResponse Code: %{http_code}\n' \
-     -X DELETE http://localhost:1234/api/users
+     -X DELETE http://api.pixomatix.com/api/users
 ```
 
 
@@ -472,7 +472,7 @@ curl -H 'Accept: application/vnd.pixomatix.v1' \
      -H 'Content-Type: application/json' \
      -H 'Accept-Language: en-US' \
      -w '\nResponse Code: %{http_code}\n' \
-     -X GET http://localhost:1234/api/images
+     -X GET http://api.pixomatix.com/api/images
 ```
 
 #### Response
@@ -488,7 +488,7 @@ curl -H 'Accept: application/vnd.pixomatix.v1' \
       "has_galleries":true,
       "has_images":false,
       "has_parent":false,
-      "thumbnail_url":"http://localhost:1234/cache/ccdce535cf8cfdfd047ec52d3e04f489/f9882cb22f0453fc184784d692e20e46_200x200.jpg"
+      "thumbnail_url":"http://api.pixomatix.com/cache/ccdce535cf8cfdfd047ec52d3e04f489/f9882cb22f0453fc184784d692e20e46_200x200.jpg"
     },
     ...
   ]
@@ -504,7 +504,7 @@ curl -H 'Accept: application/vnd.pixomatix.v1' \
      -H 'Content-Type: application/json' \
      -H 'Accept-Language: en-US' \
      -w '\nResponse Code: %{http_code}\n' \
-     -X GET http://localhost:1234/api/images/3086ed853a7336bc33c29e0dd674535c
+     -X GET http://api.pixomatix.com/api/images/3086ed853a7336bc33c29e0dd674535c
 ```
 
 #### Response
@@ -519,7 +519,7 @@ curl -H 'Accept: application/vnd.pixomatix.v1' \
     "has_galleries":true,
     "has_images":false,
     "has_parent":false,
-    "thumbnail_url":"http://localhost:1234/cache/ccdce535cf8cfdfd047ec52d3e04f489/f2e992a6cc8b8576fac3fec9a089414b_200x200.jpg"
+    "thumbnail_url":"http://api.pixomatix.com/cache/ccdce535cf8cfdfd047ec52d3e04f489/f2e992a6cc8b8576fac3fec9a089414b_200x200.jpg"
   }
   Response Code: 200
 ```
@@ -533,7 +533,7 @@ curl -H 'Accept: application/vnd.pixomatix.v1' \
      -H 'Content-Type: application/json' \
      -H 'Accept-Language: en-US' \
      -w '\nResponse Code: %{http_code}\n' \
-     -X GET http://localhost:1234/api/images/1d0946693f02996020da270d79ed3b2c/images
+     -X GET http://api.pixomatix.com/api/images/1d0946693f02996020da270d79ed3b2c/images
 ```
 
 #### Response
@@ -550,9 +550,9 @@ curl -H 'Accept: application/vnd.pixomatix.v1' \
       "has_images":false,
       "has_parent":true,
       "parent_id":"1d0946693f02996020da270d79ed3b2c",
-      "thumbnail_url":"http://localhost:1234/cache/1d0946693f02996020da270d79ed3b2c/c256005c010b3996410fa681be69c581_200x200.jpg",
-      "hdtv_url":"http://localhost:1234/cache/1d0946693f02996020da270d79ed3b2c/c256005c010b3996410fa681be69c581_1080.jpg",
-      "original_url":"http://localhost:1234/images/c256005c010b3996410fa681be69c581/original"
+      "thumbnail_url":"http://api.pixomatix.com/cache/1d0946693f02996020da270d79ed3b2c/c256005c010b3996410fa681be69c581_200x200.jpg",
+      "hdtv_url":"http://api.pixomatix.com/cache/1d0946693f02996020da270d79ed3b2c/c256005c010b3996410fa681be69c581_1080.jpg",
+      "original_url":"http://api.pixomatix.com/images/c256005c010b3996410fa681be69c581/original"
     },
     ...
   ]
@@ -568,7 +568,7 @@ curl -H 'Accept: application/vnd.pixomatix.v1' \
      -H 'Content-Type: application/json' \
      -H 'Accept-Language: en-US' \
      -w '\nResponse Code: %{http_code}\n' \
-     -X GET http://localhost:1234/api/images/3086ed853a7336bc33c29e0dd674535c/galleries
+     -X GET http://api.pixomatix.com/api/images/3086ed853a7336bc33c29e0dd674535c/galleries
 ```
 
 #### Response
@@ -585,7 +585,7 @@ curl -H 'Accept: application/vnd.pixomatix.v1' \
       "has_images":true,
       "has_parent":true,
       "parent_id":"3086ed853a7336bc33c29e0dd674535c",
-      "thumbnail_url":"http://localhost:1234/cache/ccdce535cf8cfdfd047ec52d3e04f489/4807869cde3ab130d2d60b9a68f091de_200x200.jpg"
+      "thumbnail_url":"http://api.pixomatix.com/cache/ccdce535cf8cfdfd047ec52d3e04f489/4807869cde3ab130d2d60b9a68f091de_200x200.jpg"
     },
     ...
   ]
@@ -601,7 +601,7 @@ curl -H 'Accept: application/vnd.pixomatix.v1' \
      -H 'Content-Type: application/json' \
      -H 'Accept-Language: en-US' \
      -w '\nResponse Code: %{http_code}\n' \
-     -X GET http://localhost:1234/api/images/ccdce535cf8cfdfd047ec52d3e04f489/image
+     -X GET http://api.pixomatix.com/api/images/ccdce535cf8cfdfd047ec52d3e04f489/image
 ```
 
 #### Response
@@ -631,7 +631,7 @@ curl -H 'Accept: application/vnd.pixomatix.v1' \
      -H 'Content-Type: application/json' \
      -H 'Accept-Language: en-US' \
      -w '\nResponse Code: %{http_code}\n' \
-     -X GET http://localhost:1234/api/images/ccdce535cf8cfdfd047ec52d3e04f489/parent
+     -X GET http://api.pixomatix.com/api/images/ccdce535cf8cfdfd047ec52d3e04f489/parent
 ```
 
 #### Response
