@@ -87,7 +87,7 @@ production:
 
 ## <a name="rake_tasks"></a>Rake Tasks [&uarr;](#contents)
 
-#### Rename Images
+###### Rename Images
 
 **WARNING**: Make sure you have a backup of your images before doing this. There is absolutely no guarantee it'll work as expected.
 
@@ -99,7 +99,7 @@ You can rename images in a directory in a continuous sequence with filesnames li
 rake pixomatix:rename_images
 ```
 
-#### Populate Images
+###### Populate Images
 
 Recursively scan `image_root` directories specified in `config/pixomatix.yml` and populate database.
 
@@ -107,7 +107,7 @@ Recursively scan `image_root` directories specified in `config/pixomatix.yml` an
 rake pixomatix:populate_images
 ```
 
-#### Generate Thumbnails
+###### Generate Thumbnails
 
 Generate thumbnails for all the populated images as per the specifications mentioned in `config/pixomatix.yml`. It won't generate thumbnails which exist already.
 
@@ -115,15 +115,15 @@ Generate thumbnails for all the populated images as per the specifications menti
 rake pixomatix:generate_thumbnails
 ```
 
-#### Generate HDTV Images
+###### Generate HDTV Images
 
-Generate HDTV images by scaling images (preserving aspect ratio) as per HDTV heing mentioned in `config/pixomatix.yml`. It'll also skip images which already have generated HDTV images.
+Generate HDTV images by scaling images (preserving aspect ratio) as per HDTV height mentioned in `config/pixomatix.yml`. It'll also skip images which already have generated HDTV images.
 
 ```ruby
 rake pixomatix:generate_hdtv_images
 ```
 
-#### Optimize Cache
+###### Optimize Cache
 
 Reclaim disk space by removing thumbnails/HDTV images which are no longer required.
 
@@ -131,7 +131,7 @@ Reclaim disk space by removing thumbnails/HDTV images which are no longer requir
 rake pixomatix:optimize_cache
 ```
 
-#### Sync Thumbnails To AWS S3
+###### Sync Thumbnails To AWS S3
 
 Sync generated thumbnails to AWS S3
 
@@ -139,7 +139,7 @@ Sync generated thumbnails to AWS S3
 rake pixomatix:sync_thumbnails
 ```
 
-#### Sync HDTV Images To AWS S3
+###### Sync HDTV Images To AWS S3
 
 Sync generated HDTV images to AWS S3
 
@@ -147,7 +147,7 @@ Sync generated HDTV images to AWS S3
 rake pixomatix:sync_hdtv_images
 ```
 
-#### Sync Everything To AWS S3
+###### Sync Everything To AWS S3
 
 This is basically a combined task for above mentioned two AWS S3 sync tasks. It'll sync thumbnails and HDTV images to AWS S3.
 
@@ -206,10 +206,10 @@ Response format is always `JSON` whether you specify it or not. Following fields
 
 ## Authentication API [&uarr;](#contents)
 
-* <a name="auth_register"></a>Register a new user => `POST /api/auth/register` [&uarr; API](#api_endpoints)
+#### <a name="auth_register"></a>Register a new user : `POST /api/auth/register` [&uarr; API](#api_endpoints)
 
 
-#### Request
+###### Request
 
 ```javascript
 curl -H 'Accept: application/vnd.pixomatix.v1' \
@@ -220,21 +220,21 @@ curl -H 'Accept: application/vnd.pixomatix.v1' \
      -X POST http://api.pixomatix.com/api/auth/register
 ```
 
-#### Response when registered successfully
+###### Response when registered successfully
 
 ```javascript
 {"user":{"name":"Kulbir Saini","email":"test@example.com"},"notice":"User registered successfully"}
 Response Code: 200
 ```
 
-#### Response when registered already but not confimred yet
+###### Response when registered already but not confimred yet
 
 ```javascript
 {"notice":"User already registered but not confirmed. Check your email to confirm account"}
 Response Code: 401
 ```
 
-#### Otherwise
+###### Otherwise
 
 ```javascript
 {"error":["Password confirmation doesn't match Password", ...],"notice":"User registration failed"}
@@ -242,10 +242,10 @@ Response Code: 422
 ```
 
 
-* <a name="auth_login"></a>Login => `POST /api/auth/login` [&uarr; API](#api_endpoints)
+#### <a name="auth_login"></a>Login : `POST /api/auth/login` [&uarr; API](#api_endpoints)
 
 
-#### Request
+###### Request
 
 ```javascript
 curl -H 'Accept: application/vnd.pixomatix.v1' \
@@ -256,28 +256,28 @@ curl -H 'Accept: application/vnd.pixomatix.v1' \
      -X POST http://api.pixomatix.com/api/auth/login
 ```
 
-#### Response when user is locked
+###### Response when user is locked
 
 ```javascript
 {"notice":"User account is locked","location":"/api/auth/unlock"}
 Response Code: 401
 ```
 
-#### Response when user not confirmed
+###### Response when user not confirmed
 
 ```javascript
 {"notice":"User account is not confimred. Please check confirmation email for instructions","location":"/api/auth/login"}
 Response Code: 401
 ```
 
-#### Response when invalid email or password
+###### Response when invalid email or password
 
 ```javascript
 {"notice":"Invalid email or password"}
 Response Code: 401
 ```
 
-#### Response when login successful
+###### Response when login successful
 
 ```javascript
 {"user":{"name":"Kulbir Saini","email":"test@example.com"},"token":"5a0dd200dccc9a87f83fcad30e1ae78b","notice":"Logged in successfully"}
@@ -285,9 +285,9 @@ Response Code: 200
 ```
 
 
-* <a name="auth_user"></a>Get current user => `GET /api/auth/user` [&uarr; API](#api_endpoints)
+#### <a name="auth_user"></a>Get current user : `GET /api/auth/user` [&uarr; API](#api_endpoints)
 
-#### Request
+###### Request
 
 ```javascript
 curl -H 'Accept: application/vnd.pixomatix.v1' \
@@ -300,10 +300,10 @@ curl -H 'Accept: application/vnd.pixomatix.v1' \
 ```
 
 
-* <a name="auth_validate"></a>Validate authentication token => `GET /api/auth/validate` [&uarr; API](#api_endpoints)
+#### <a name="auth_validate"></a>Validate authentication token : `GET /api/auth/validate` [&uarr; API](#api_endpoints)
 
 
-#### Request
+###### Request
 
 ```javascript
 curl -H 'Accept: application/vnd.pixomatix.v1' \
@@ -316,10 +316,10 @@ curl -H 'Accept: application/vnd.pixomatix.v1' \
 ```
 
 
-* <a name="auth_logout"></a>Logout user => `DELETE /api/auth/logout` [&uarr; API](#api_endpoints)
+#### <a name="auth_logout"></a>Logout user : `DELETE /api/auth/logout` [&uarr; API](#api_endpoints)
 
 
-#### Request
+###### Request
 
 ```javascript
 curl -H 'Accept: application/vnd.pixomatix.v1' \
@@ -332,10 +332,10 @@ curl -H 'Accept: application/vnd.pixomatix.v1' \
 ```
 
 
-* <a name="auth_reset_password_instructions"></a>Get reset password instructions => `GET /api/auth/reset_password` [&uarr; API](#api_endpoints)
+#### <a name="auth_reset_password_instructions"></a>Get reset password instructions : `GET /api/auth/reset_password` [&uarr; API](#api_endpoints)
 
 
-#### Request
+###### Request
 
 ```javascript
 curl -H 'Accept: application/vnd.pixomatix.v1' \
@@ -347,10 +347,10 @@ curl -H 'Accept: application/vnd.pixomatix.v1' \
 ```
 
 
-* <a name="auth_reset_password"></a>Reset password using issued token => `POST /api/auth/reset_password` [&uarr; API](#api_endpoints)
+#### <a name="auth_reset_password"></a>Reset password using issued token : `POST /api/auth/reset_password` [&uarr; API](#api_endpoints)
 
 
-#### Request
+###### Request
 
 ```javascript
 curl -H 'Accept: application/vnd.pixomatix.v1' \
@@ -364,10 +364,10 @@ curl -H 'Accept: application/vnd.pixomatix.v1' \
 ```
 
 
-* <a name="auth_unlock_instructions"></a>Get unlock instructions => `GET /api/auth/unlock` [&uarr; API](#api_endpoints)
+#### <a name="auth_unlock_instructions"></a>Get unlock instructions : `GET /api/auth/unlock` [&uarr; API](#api_endpoints)
 
 
-#### Request
+###### Request
 
 ```javascript
 curl -H 'Accept: application/vnd.pixomatix.v1' \
@@ -379,10 +379,10 @@ curl -H 'Accept: application/vnd.pixomatix.v1' \
 ```
 
 
-* <a name="auth_unlock"></a>Unlock user using issued token => `POST /api/auth/unlock` [&uarr; API](#api_endpoints)
+#### <a name="auth_unlock"></a>Unlock user using issued token : `POST /api/auth/unlock` [&uarr; API](#api_endpoints)
 
 
-#### Request
+###### Request
 
 ```javascript
 curl -H 'Accept: application/vnd.pixomatix.v1' \
@@ -395,10 +395,10 @@ curl -H 'Accept: application/vnd.pixomatix.v1' \
 ```
 
 
-* <a name="auth_confirmation_instructions"></a>Get confirmation instructions => `GET /api/auth/confirm` [&uarr; API](#api_endpoints)
+#### <a name="auth_confirmation_instructions"></a>Get confirmation instructions : `GET /api/auth/confirm` [&uarr; API](#api_endpoints)
 
 
-#### Request
+###### Request
 
 ```javascript
 curl -H 'Accept: application/vnd.pixomatix.v1' \
@@ -410,10 +410,10 @@ curl -H 'Accept: application/vnd.pixomatix.v1' \
 ```
 
 
-* <a name="auth_confirm"></a>Confirm account using issued token => `POST /api/auth/confirm` [&uarr; API](#api_endpoints)
+#### <a name="auth_confirm"></a>Confirm account using issued token : `POST /api/auth/confirm` [&uarr; API](#api_endpoints)
 
 
-#### Request
+###### Request
 
 ```javascript
 curl -H 'Accept: application/vnd.pixomatix.v1' \
@@ -426,12 +426,12 @@ curl -H 'Accept: application/vnd.pixomatix.v1' \
 ```
 
 
-* <a name="users_update"></a>Update user data => `PUT /api/users` OR `PATCH /api/users` [&uarr; API](#api_endpoints)
+#### <a name="users_update"></a>Update user data : `PUT /api/users` OR `PATCH /api/users` [&uarr; API](#api_endpoints)
 
 **WARNING:** Email can not be updated.
 
 
-#### Request
+###### Request
 
 ```javascript
 curl -H 'Accept: application/vnd.pixomatix.v1' \
@@ -445,10 +445,10 @@ curl -H 'Accept: application/vnd.pixomatix.v1' \
 ```
 
 
-* <a name="users_cancel"></a>Cancel registration => `DELETE /api/users` [&uarr; API](#api_endpoints)
+#### <a name="users_cancel"></a>Cancel registration : `DELETE /api/users` [&uarr; API](#api_endpoints)
 
 
-#### Request
+###### Request
 
 ```javascript
 curl -H 'Accept: application/vnd.pixomatix.v1' \
@@ -463,9 +463,9 @@ curl -H 'Accept: application/vnd.pixomatix.v1' \
 
 ## Images API
 
-* <a name="images_index"></a>Array of gallery objects => `GET /api/images` [&uarr; API](#api_endpoints)
+#### <a name="images_index"></a>Array of gallery objects : `GET /api/images` [&uarr; API](#api_endpoints)
 
-#### Request
+###### Request
 
 ```javascript
 curl -H 'Accept: application/vnd.pixomatix.v1' \
@@ -475,7 +475,7 @@ curl -H 'Accept: application/vnd.pixomatix.v1' \
      -X GET http://api.pixomatix.com/api/images
 ```
 
-#### Response
+###### Response
 
 ```javascript
   [
@@ -495,9 +495,9 @@ curl -H 'Accept: application/vnd.pixomatix.v1' \
   Response Code: 200
 ```
 
-* <a name="images_show"></a>Gallery Object => `GET /api/images/:id` [&uarr; API](#api_endpoints)
+#### <a name="images_show"></a>Gallery Object : `GET /api/images/:id` [&uarr; API](#api_endpoints)
 
-#### Request
+###### Request
 
 ```javascript
 curl -H 'Accept: application/vnd.pixomatix.v1' \
@@ -507,7 +507,7 @@ curl -H 'Accept: application/vnd.pixomatix.v1' \
      -X GET http://api.pixomatix.com/api/images/3086ed853a7336bc33c29e0dd674535c
 ```
 
-#### Response
+###### Response
 
 ```javascript
   {
@@ -524,9 +524,9 @@ curl -H 'Accept: application/vnd.pixomatix.v1' \
   Response Code: 200
 ```
 
-* <a name="images_images"></a>Array of image objects in a gallery => `GET /api/images/:id/images` [&uarr; API](#api_endpoints)
+#### <a name="images_images"></a>Array of image objects in a gallery : `GET /api/images/:id/images` [&uarr; API](#api_endpoints)
 
-#### Request
+###### Request
 
 ```javascript
 curl -H 'Accept: application/vnd.pixomatix.v1' \
@@ -536,7 +536,7 @@ curl -H 'Accept: application/vnd.pixomatix.v1' \
      -X GET http://api.pixomatix.com/api/images/1d0946693f02996020da270d79ed3b2c/images
 ```
 
-#### Response
+###### Response
 
 ```javascript
   [
@@ -559,9 +559,9 @@ curl -H 'Accept: application/vnd.pixomatix.v1' \
   Response Code: 200
 ```
 
-* <a name="images_galleries"></a>Array of gallery objects in a gallery => `GET /api/images/:id/galleries` [&uarr; API](#api_endpoints)
+#### <a name="images_galleries"></a>Array of gallery objects in a gallery : `GET /api/images/:id/galleries` [&uarr; API](#api_endpoints)
 
-#### Request
+###### Request
 
 ```javascript
 curl -H 'Accept: application/vnd.pixomatix.v1' \
@@ -571,7 +571,7 @@ curl -H 'Accept: application/vnd.pixomatix.v1' \
      -X GET http://api.pixomatix.com/api/images/3086ed853a7336bc33c29e0dd674535c/galleries
 ```
 
-#### Response
+###### Response
 
 ```javascript
   [
@@ -592,9 +592,9 @@ curl -H 'Accept: application/vnd.pixomatix.v1' \
   Response Code: 200
 ```
 
-* <a name="images_image"></a>First image id in a gallery if present => `GET /api/images/:id/image` [&uarr; API](#api_endpoints)
+#### <a name="images_image"></a>First image id in a gallery if present : `GET /api/images/:id/image` [&uarr; API](#api_endpoints)
 
-#### Request
+###### Request
 
 ```javascript
 curl -H 'Accept: application/vnd.pixomatix.v1' \
@@ -604,7 +604,7 @@ curl -H 'Accept: application/vnd.pixomatix.v1' \
      -X GET http://api.pixomatix.com/api/images/ccdce535cf8cfdfd047ec52d3e04f489/image
 ```
 
-#### Response
+###### Response
 
 ```javascript
   {
@@ -622,9 +622,9 @@ OR
   Response Code: 200
 ```
 
-* <a name="images_parent"></a>Parent id which has galleries (may be parent of parent and so on) => `GET /api/images/:id/parent` [&uarr; API](#api_endpoints)
+#### <a name="images_parent"></a>Parent id which has galleries (may be parent of parent and so on) : `GET /api/images/:id/parent` [&uarr; API](#api_endpoints)
 
-#### Request
+###### Request
 
 ```javascript
 curl -H 'Accept: application/vnd.pixomatix.v1' \
@@ -634,7 +634,7 @@ curl -H 'Accept: application/vnd.pixomatix.v1' \
      -X GET http://api.pixomatix.com/api/images/ccdce535cf8cfdfd047ec52d3e04f489/parent
 ```
 
-#### Response
+###### Response
 
 
 ```javascript

@@ -37,11 +37,38 @@ pre {
   padding: 10px;
 }
 
-p code, li code {
+code {
   background: lightgray;
   border-radius: 3px;
   padding: 1px 5px;
   color: brown;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: #333;
+}
+
+h2 {
+  font-size: 1.75em;
+  line-height: 1.225;
+}
+
+h4 {
+  font-size: 1.25em;
+  font-weight: bold;
+  line-height: 1.4;
+}
+
+h6 {
+  font-size: 1em;
+  color: #777;
+  margin-top: 0px;
+  margin-bottom: 0px;
+}
+
+pre > code {
+  background: black;
+  color: white;
 }
 
 ul {
