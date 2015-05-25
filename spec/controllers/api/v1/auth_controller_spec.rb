@@ -14,6 +14,15 @@ def authenticate_user_and_set_headers(user, password = '12345678')
 end
 
 RSpec.describe Api::V1::AuthController, type: :controller do
+  context "request with unsupported locale" do
+    it "responds with internal server error" do
+      request.headers['Accept-Language'] = 'es-pe'
+      get :register
+      expect(response).to have_http_status(500)
+      expect(notice).to eq(scoped_t('base.internal_server_error'))
+    end
+  end
+
   context "register" do
     context "without data" do
       it "responds with registration failed" do

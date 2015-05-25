@@ -7,7 +7,7 @@ class Api::V1::BaseController < ActionController::Base
   before_action :set_current_token
   before_action :authenticate!
 
-  around_filter :generic_exception
+  rescue_from Exception, with: :generic_exception
 
   private
 
@@ -20,17 +20,17 @@ class Api::V1::BaseController < ActionController::Base
     render json: message, status: status
   end
 
-  def generic_exception
-    begin
-      yield
-    rescue Exception => e
-      Rails.logger.debug ([e.message] + e.backtrace.first(25)).join("\n")
-      render_message({ error: e.message, notice: scoped_t('base.internal_server_error'), status: :internal_server_error })
-    end
+  def generic_exception(e)
+    Rails.logger.debug ([e.message] + e.backtrace.first(35)).join("\n")
+    render_message({ error: e.message, notice: scoped_t('base.internal_server_error'), status: :internal_server_error })
+  end
+
+  def get_locale_from_request
+    (request.headers['Accept-Language'] || '').scan(/^([a-z]{2})-/).flatten.first
   end
 
   def set_locale
-    I18n.locale = params[:locale] || I18n.default_locale
+    I18n.locale = get_locale_from_request || I18n.default_locale
   end
 
   def set_cors_request_header
