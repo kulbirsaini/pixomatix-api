@@ -7,9 +7,7 @@ gem 'uglifier'
 gem 'sass-rails'
 gem 'therubyracer'
 
-# Authentication
-gem 'devise'
-gem 'devise-encryptable'
+gem 'bcrypt'
 
 # Better output layout in console
 gem 'hirb'
@@ -40,4 +38,8 @@ group :development, :test do
   gem 'capistrano-rails'
   gem 'capistrano-rvm'
   gem 'capistrano-passenger'
+
+  # Tests
+  gem 'rspec-rails', '~> 3.0'
+  gem "factory_girl_rails", "~> 4.0"
 end

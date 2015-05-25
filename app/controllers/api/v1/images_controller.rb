@@ -1,4 +1,5 @@
 class Api::V1::ImagesController < Api::V1::BaseController
+  before_action :authenticate!, only: [] #FIXME remove this later to enable authentication
   before_action :set_image, only: [:show, :galleries, :images, :image, :parent]
 
   # GET /images.json
