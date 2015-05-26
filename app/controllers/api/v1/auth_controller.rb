@@ -12,6 +12,7 @@ class Api::V1::AuthController < Api::V1::BaseController
     else
       @user = User.create(user_params)
       if @user.valid?
+        Api::V1::UsersMailer.registration_confirmation(@user).deliver_now
         render_message({ user: @user, notice: scoped_t('auth.registered_successfully') })
       else
         render_message({ error: @user.errors.full_messages, notice: scoped_t('auth.registration_failed'), status: :unprocessable_entity })
@@ -58,7 +59,7 @@ class Api::V1::AuthController < Api::V1::BaseController
 
   def reset_password_instructions
     if @user && @user.set_reset_passwork_token!
-      #TODO send email
+      Api::V1::UsersMailer.reset_password_token(@user).deliver_now
       render_message({ notice: scoped_t('auth.reset_password_sent'), location: login_api_auth_index_path })
     else
       render_message({ notice: scoped_t('auth.cannot_reset_password'), status: :unprocessable_entity })
@@ -80,7 +81,7 @@ class Api::V1::AuthController < Api::V1::BaseController
 
   def unlock_instructions
     if @user && @user.locked? && @user.set_unlock_token!
-      #TODO send email
+      Api::V1::UsersMailer.unlock_token(@user).deliver_now
       render_message({ notice: scoped_t('auth.unlock_sent'), location: login_api_auth_index_path })
     else
       render_message({ notice: scoped_t('auth.cannot_unlock'), status: :unprocessable_entity })
@@ -102,7 +103,7 @@ class Api::V1::AuthController < Api::V1::BaseController
 
   def confirmation_instructions
     if @user && !@user.confirmed? && @user.set_confirmation_token!
-      #TODO send email
+      Api::V1::UsersMailer.confirmation_token(@user).deliver_now
       render_message({ notice: scoped_t('auth.confirmation_sent'), location: login_api_auth_index_path })
     else
       render_message({ notice: scoped_t('auth.cannot_confirm'), status: :unprocessable_entity })

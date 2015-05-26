@@ -9,10 +9,10 @@ en:
       auth:
         registered_already: 'User already registered'
         registered_and_unconfirmed: 'User already registered but not confirmed. Check your email to confirm account'
-        registered_successfully: 'User registered successfully'
+        registered_successfully: 'User registered successfully. Check your email to confirm account'
         registration_failed: 'User registration failed'
         user_locked: 'User account is locked'
-        user_not_confirmed: 'User account is not confimred. Please check confirmation email for instructions'
+        user_not_confirmed: 'User account is not confirmed. Please check confirmation email for instructions'
         login_success: 'Logged in successfully'
         invalid_credentials: 'Invalid email or password'
         logout_success: 'Logged out successfully'

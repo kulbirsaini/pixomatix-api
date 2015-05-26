@@ -1,0 +1,11 @@
+Hello, <%= @user.name %>!<br /><br />
+
+Looks like you requested a token to unlock your account!<br /><br />
+
+<% if @user.unlock_token.present? %>
+Your account unlock token is <%= @user.unlock_token %> Please use this to unlock your account.<br /><br />
+<% end %>
+
+If you didn't make this request, you don't have to take any action. Just ignore this email.<br /><br />
+
+Have fun!

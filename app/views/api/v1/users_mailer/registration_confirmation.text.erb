@@ -1,0 +1,9 @@
+Hello, <%= @user.name %>!
+
+Thank you for registering with Pixomatix!
+
+<% if @user.confirmation_token.present? %>
+Your confirmation token is <%= @user.confirmation_token %> Please use this to confirm your account.
+<% end %>
+
+Have fun!

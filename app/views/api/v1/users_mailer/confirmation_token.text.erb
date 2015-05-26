@@ -1,0 +1,11 @@
+Hello, <%= @user.name %>!
+
+Looks like you requested a new confirmation token!
+
+<% if @user.confirmation_token.present? %>
+Your confirmation token is <%= @user.confirmation_token %> Please use this to confirm your account.
+<% end %>
+
+If you didn't make this request, you don't have to take any action. Just ignore this email.
+
+Have fun!
