@@ -552,7 +552,8 @@ curl -H 'Accept: application/vnd.pixomatix.v1' \
       "parent_id":"1d0946693f02996020da270d79ed3b2c",
       "thumbnail_url":"http://api.pixomatix.com/cache/1d0946693f02996020da270d79ed3b2c/c256005c010b3996410fa681be69c581_200x200.jpg",
       "hdtv_url":"http://api.pixomatix.com/cache/1d0946693f02996020da270d79ed3b2c/c256005c010b3996410fa681be69c581_1080.jpg",
-      "original_url":"http://api.pixomatix.com/images/c256005c010b3996410fa681be69c581/original"
+      "original_url":"http://api.pixomatix.com/images/c256005c010b3996410fa681be69c581/original",
+      "download_url":"http://api.pixomatix.com/images/c256005c010b3996410fa681be69c581/download"
     },
     ...
   ]

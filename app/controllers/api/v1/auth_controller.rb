@@ -5,7 +5,7 @@ class Api::V1::AuthController < Api::V1::BaseController
   def register
     if @user
       if !@user.confirmed?
-        render_message({ notice: scoped_t('auth.registered_and_unconfirmed'), status: :unauthorized })
+        render_message({ notice: scoped_t('auth.registered_and_unconfirmed'), status: :unauthorized, location: confirmation_instructions_api_auth_index_path })
       else
         render_message({ notice: scoped_t('auth.registered_already'), location: login_api_auth_index_path, status: :unauthorized })
       end
@@ -13,9 +13,9 @@ class Api::V1::AuthController < Api::V1::BaseController
       @user = User.create(user_params)
       if @user.valid?
         Api::V1::UsersMailer.registration_confirmation(@user).deliver_now
-        render_message({ user: @user, notice: scoped_t('auth.registered_successfully') })
+        render_message({ user: @user, notice: scoped_t('auth.registered_successfully'), location: login_api_auth_index_path })
       else
-        render_message({ error: @user.errors.full_messages, notice: scoped_t('auth.registration_failed'), status: :unprocessable_entity })
+        render_message({ error: @user.errors.full_messages, notice: scoped_t('auth.registration_failed'), location: register_api_auth_index_path, status: :unprocessable_entity })
       end
     end
   end
@@ -23,16 +23,16 @@ class Api::V1::AuthController < Api::V1::BaseController
   def login
     if @user
       if @user.locked?
-        render_message({ notice: scoped_t('auth.user_locked'), location: unlock_api_auth_index_path, status: :unauthorized })
+        render_message({ notice: scoped_t('auth.user_locked'), location: unlock_instructions_api_auth_index_path, status: :unauthorized })
       elsif !@user.confirmed?
-        render_message({ notice: scoped_t('auth.user_not_confirmed'), location: login_api_auth_index_path, status: :unauthorized })
+        render_message({ notice: scoped_t('auth.user_not_confirmed'), location: confirmation_instructions_api_auth_index_path, status: :unauthorized })
       elsif @user.valid_password?(user_params[:password])
         render_message({ user: @user, token: @user.issue_token, notice: scoped_t('auth.login_success') })
       else
-        render_message({ notice: scoped_t('auth.invalid_credentials'), status: :unauthorized })
+        render_message({ notice: scoped_t('auth.invalid_credentials'), location: login_api_auth_index_path, status: :unauthorized })
       end
     else
-      render_message({ notice: scoped_t('auth.invalid_credentials'), status: :unauthorized })
+      render_message({ notice: scoped_t('auth.invalid_credentials'), location: login_api_auth_index_path, status: :unauthorized })
     end
   end
 
@@ -53,14 +53,14 @@ class Api::V1::AuthController < Api::V1::BaseController
     if @current_user
       render_message({ user: current_user, notice: scoped_t('auth.token_valid') })
     else
-      render_message({ notice: scoped_t('auth.token_invalid'), status: :unauthorized })
+      render_message({ notice: scoped_t('auth.token_invalid'), location: login_api_auth_index_path, status: :unauthorized })
     end
   end
 
   def reset_password_instructions
     if @user && @user.set_reset_passwork_token!
       Api::V1::UsersMailer.reset_password_token(@user).deliver_now
-      render_message({ notice: scoped_t('auth.reset_password_sent'), location: login_api_auth_index_path })
+      render_message({ notice: scoped_t('auth.reset_password_sent') })
     else
       render_message({ notice: scoped_t('auth.cannot_reset_password'), status: :unprocessable_entity })
     end
@@ -82,7 +82,7 @@ class Api::V1::AuthController < Api::V1::BaseController
   def unlock_instructions
     if @user && @user.locked? && @user.set_unlock_token!
       Api::V1::UsersMailer.unlock_token(@user).deliver_now
-      render_message({ notice: scoped_t('auth.unlock_sent'), location: login_api_auth_index_path })
+      render_message({ notice: scoped_t('auth.unlock_sent') })
     else
       render_message({ notice: scoped_t('auth.cannot_unlock'), status: :unprocessable_entity })
     end
@@ -104,7 +104,7 @@ class Api::V1::AuthController < Api::V1::BaseController
   def confirmation_instructions
     if @user && !@user.confirmed? && @user.set_confirmation_token!
       Api::V1::UsersMailer.confirmation_token(@user).deliver_now
-      render_message({ notice: scoped_t('auth.confirmation_sent'), location: login_api_auth_index_path })
+      render_message({ notice: scoped_t('auth.confirmation_sent') })
     else
       render_message({ notice: scoped_t('auth.cannot_confirm'), status: :unprocessable_entity })
     end

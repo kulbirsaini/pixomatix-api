@@ -2,13 +2,6 @@ Rails.application.routes.draw do
   resources :home, only: [:index]
   root 'home#index'
 
-  resources :images, only: [] do
-    member do
-      get :original
-      get :download
-    end
-  end
-
   namespace :api, defaults: { format: :json } do
     scope module: :v1, constraints: Pixomatix::ApiConstraints.new(version: 1, default: true) do
 
@@ -41,6 +34,8 @@ Rails.application.routes.draw do
 
       resources :images, only: [:index, :show]  do
         member do
+          get :original
+          get :download
           get :galleries
           get :images
           get :image
