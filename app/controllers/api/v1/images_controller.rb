@@ -1,10 +1,10 @@
 class Api::V1::ImagesController < Api::V1::BaseController
   before_action :authenticate!, only: [] #FIXME remove this later to enable authentication
-  before_action :set_image, only: [:show, :original, :download, :galleries, :images, :image, :parent]
+  before_action :set_image, only: [:show, :original, :download, :galleries, :photos, :photo, :parent]
 
   # GET /images.json
   def index
-    @images = Image.root
+    @galleries = Image.root.count > 1 ? Image.root : Image.root.first.galleries
   end
 
   def show
@@ -43,15 +43,15 @@ class Api::V1::ImagesController < Api::V1::BaseController
   end
 
   def galleries
-    @galleries = @image.children
+    @galleries = @image.galleries
   end
 
-  def images
-    @images = @image.images.ordered
+  def photos
+    @photos = @image.photos.ordered
   end
 
-  def image
-    @first_image = @image.images.ordered.first
+  def photo
+    @first_photo = @image.photos.ordered.first
   end
 
   def parent

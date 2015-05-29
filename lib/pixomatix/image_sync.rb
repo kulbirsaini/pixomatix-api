@@ -9,7 +9,8 @@ module Pixomatix
     end
 
     def self.unique_id_for_text(data)
-      Digest::MD5.hexdigest(data)
+      # We use MD5 instead of uuid/SecureRandom because we want to retain the id on rescan.
+      Digest::MD5.hexdigest(data).first(16)
     end
 
     def self.unique_id_for_file(filepath)
@@ -58,7 +59,7 @@ module Pixomatix
 
     def self.generate_thumbnails(images = nil, msg_to_stdout = false)
       self.info("ImageSync::generate_thumbnails Start", msg_to_stdout)
-      (images || Image.images).each do |image|
+      (images || Image.photos).each do |image|
         filepath = image.absolute_thumbnail_path
         if File.exists?(filepath)
           self.info("ImageSync::generate_thumbnails Exists at #{filepath} for Image: #{image.id}", msg_to_stdout)
@@ -76,7 +77,7 @@ module Pixomatix
 
     def self.generate_hdtv_images(images = nil, msg_to_stdout = false)
       self.info("ImageSync::generate_hdtv_images Start", msg_to_stdout)
-      (images || Image.images).each do |image|
+      (images || Image.photos).each do |image|
         filepath = image.absolute_hdtv_path
         if File.exists?(filepath)
           self.info("ImageSync::generate_hdtv_images Exists at #{filepath} for Image: #{image.id}", msg_to_stdout)
@@ -212,7 +213,7 @@ module Pixomatix
         self.class.get_sub_directories(cur_directory).each do |sub_directory|
           populate_images(sub_directory, gallery, msg_to_stdout)
         end
-        if gallery.children.count == 0 && gallery.images.count == 0
+        if gallery.galleries.count == 0 && gallery.photos.count == 0
           self.class.info("ImageSync::populate_images Removed gallery: #{gallery.id}", msg_to_stdout)
           gallery.destroy
         end
@@ -220,14 +221,14 @@ module Pixomatix
         @directories.each do |directory|
           gallery = create_gallery(directory, parent_gallery)
           unless gallery.save
-            self.class.info("ImageSync::populate_images no gallery for #{directory}, parent_id: #{parent_gallery.id}, errors: #{gallery.errors.messages}", msg_to_stdout)
+            self.class.info("ImageSync::populate_images no gallery for #{directory}, parent_id: #{parent_gallery.try(:id)}, errors: #{gallery.errors.messages}", msg_to_stdout)
             return
           end
           populate_images_from_directory(directory, parent_gallery, msg_to_stdout)
           self.class.get_sub_directories(directory).each do |sub_directory|
             populate_images(sub_directory, gallery, msg_to_stdout)
           end
-          if gallery.children.count == 0 && gallery.images.count == 0
+          if gallery.galleries.count == 0 && gallery.photos.count == 0
             self.class.info("ImageSync::populate_images Removed gallery: #{gallery.id}", msg_to_stdout)
             gallery.destroy
           end
@@ -253,17 +254,17 @@ module Pixomatix
                         result
                       end
 
-      gallery.images.where.not(uid: images_in_dir.keys).each do |image|
+      gallery.photos.where.not(uid: images_in_dir.keys).each do |image|
         self.class.info("ImageSync::populate_images_from_directory Deleted Image: #{image.id} #{File.join(directory, image.filename)}", msg_to_stdout)
         image.destroy
       end
       images_in_dir.each do |uid, data|
-        new_image = gallery.images.where(uid: uid).first
+        new_image = gallery.photos.where(uid: uid).first
         if new_image
           new_image.filename = data[:filename]
         else
           image = MiniMagick::Image.open(data[:filepath])
-          new_image = gallery.images.where(filename: data[:filename], uid: uid, width: image.width, height: image.height, size: image.size, mime_type: image.mime_type).first_or_initialize
+          new_image = gallery.photos.where(filename: data[:filename], uid: uid, width: image.width, height: image.height, size: image.size, mime_type: image.mime_type).first_or_initialize
           image.destroy!
         end
         if new_image.save

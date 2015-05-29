@@ -197,12 +197,12 @@ Response format is always `JSON` whether you specify it or not. Following fields
 
 #### <a name="api_images"></a>Images [&uarr;](#contents)
 
-- **[`GET /api/images`](#images_index)**
-- **[`GET /api/images/:id`](#images_show)**
-- **[`GET /api/images/:id/images`](#images_images)**
-- **[`GET /api/images/:id/galleries`](#images_galleries)**
-- **[`GET /api/images/:id/image`](#images_image)**
-- **[`GET /api/images/:id/parent`](#images_parent)**
+- **[`GET /api/galleries`](#images_index)**
+- **[`GET /api/galleries/:id`](#images_show)**
+- **[`GET /api/galleries/:id/photos`](#images_photos)**
+- **[`GET /api/galleries/:id/galleries`](#images_galleries)**
+- **[`GET /api/galleries/:id/photo`](#images_photo)**
+- **[`GET /api/galleries/:id/parent`](#images_parent)**
 
 ## Authentication API [&uarr;](#contents)
 
@@ -463,7 +463,7 @@ curl -H 'Accept: application/vnd.pixomatix.v1' \
 
 ## Images API
 
-#### <a name="images_index"></a>Array of gallery objects : `GET /api/images` [&uarr; API](#api_endpoints)
+#### <a name="images_index"></a>Array of gallery objects : `GET /api/galleries` [&uarr; API](#api_endpoints)
 
 ###### Request
 
@@ -472,7 +472,7 @@ curl -H 'Accept: application/vnd.pixomatix.v1' \
      -H 'Content-Type: application/json' \
      -H 'Accept-Language: en-US' \
      -w '\nResponse Code: %{http_code}\n' \
-     -X GET http://api.pixomatix.com/api/images
+     -X GET http://api.pixomatix.com/api/galleries
 ```
 
 ###### Response
@@ -480,22 +480,22 @@ curl -H 'Accept: application/vnd.pixomatix.v1' \
 ```javascript
   [
     {
-      "id":"3086ed853a7336bc33c29e0dd674535c",
+      "id":"3086ed853a7336bc",
       "caption":"All Pictures",
       "vertical":false,
-      "is_image":false,
+      "is_photo":false,
       "is_gallery":true,
       "has_galleries":true,
-      "has_images":false,
+      "has_photos":false,
       "has_parent":false,
-      "thumbnail_url":"http://api.pixomatix.com/cache/ccdce535cf8cfdfd047ec52d3e04f489/f9882cb22f0453fc184784d692e20e46_200x200.jpg"
+      "thumbnail_url":"http://api.pixomatix.com/cache/ccdce535cf8cfdfd/f9882cb22f0453fc_200x200.jpg"
     },
     ...
   ]
   Response Code: 200
 ```
 
-#### <a name="images_show"></a>Gallery Object : `GET /api/images/:id` [&uarr; API](#api_endpoints)
+#### <a name="images_show"></a>Gallery Object : `GET /api/galleries/:id` [&uarr; API](#api_endpoints)
 
 ###### Request
 
@@ -504,27 +504,27 @@ curl -H 'Accept: application/vnd.pixomatix.v1' \
      -H 'Content-Type: application/json' \
      -H 'Accept-Language: en-US' \
      -w '\nResponse Code: %{http_code}\n' \
-     -X GET http://api.pixomatix.com/api/images/3086ed853a7336bc33c29e0dd674535c
+     -X GET http://api.pixomatix.com/api/galleries/3086ed853a7336bc
 ```
 
 ###### Response
 
 ```javascript
   {
-    "id":"3086ed853a7336bc33c29e0dd674535c",
+    "id":"3086ed853a7336bc",
     "caption":"All Pictures",
     "vertical":false,
-    "is_image":false,
+    "is_photo":false,
     "is_gallery":true,
     "has_galleries":true,
-    "has_images":false,
+    "has_photos":false,
     "has_parent":false,
-    "thumbnail_url":"http://api.pixomatix.com/cache/ccdce535cf8cfdfd047ec52d3e04f489/f2e992a6cc8b8576fac3fec9a089414b_200x200.jpg"
+    "thumbnail_url":"http://api.pixomatix.com/cache/ccdce535cf8cfdfd/f2e992a6cc8b8576_200x200.jpg"
   }
   Response Code: 200
 ```
 
-#### <a name="images_images"></a>Array of image objects in a gallery : `GET /api/images/:id/images` [&uarr; API](#api_endpoints)
+#### <a name="images_photos"></a>Array of image objects in a gallery : `GET /api/galleries/:id/photos` [&uarr; API](#api_endpoints)
 
 ###### Request
 
@@ -533,7 +533,7 @@ curl -H 'Accept: application/vnd.pixomatix.v1' \
      -H 'Content-Type: application/json' \
      -H 'Accept-Language: en-US' \
      -w '\nResponse Code: %{http_code}\n' \
-     -X GET http://api.pixomatix.com/api/images/1d0946693f02996020da270d79ed3b2c/images
+     -X GET http://api.pixomatix.com/api/galleries/1d0946693f029960/photos
 ```
 
 ###### Response
@@ -541,26 +541,26 @@ curl -H 'Accept: application/vnd.pixomatix.v1' \
 ```javascript
   [
     {
-      "id":"c256005c010b3996410fa681be69c581",
+      "id":"c256005c010b3996",
       "caption":null,
       "vertical":true,
-      "is_image":true,
+      "is_photo":true,
       "is_gallery":false,
       "has_galleries":false,
-      "has_images":false,
+      "has_photos":false,
       "has_parent":true,
-      "parent_id":"1d0946693f02996020da270d79ed3b2c",
-      "thumbnail_url":"http://api.pixomatix.com/cache/1d0946693f02996020da270d79ed3b2c/c256005c010b3996410fa681be69c581_200x200.jpg",
-      "hdtv_url":"http://api.pixomatix.com/cache/1d0946693f02996020da270d79ed3b2c/c256005c010b3996410fa681be69c581_1080.jpg",
-      "original_url":"http://api.pixomatix.com/images/c256005c010b3996410fa681be69c581/original",
-      "download_url":"http://api.pixomatix.com/images/c256005c010b3996410fa681be69c581/download"
+      "parent_id":"1d0946693f029960",
+      "thumbnail_url":"http://api.pixomatix.com/cache/1d0946693f029960/c256005c010b3996_200x200.jpg",
+      "hdtv_url":"http://api.pixomatix.com/cache/1d0946693f029960/c256005c010b3996_1080.jpg",
+      "original_url":"http://api.pixomatix.com/images/c256005c010b3996/original",
+      "download_url":"http://api.pixomatix.com/images/c256005c010b3996/download"
     },
     ...
   ]
   Response Code: 200
 ```
 
-#### <a name="images_galleries"></a>Array of gallery objects in a gallery : `GET /api/images/:id/galleries` [&uarr; API](#api_endpoints)
+#### <a name="images_galleries"></a>Array of gallery objects in a gallery : `GET /api/galleries/:id/galleries` [&uarr; API](#api_endpoints)
 
 ###### Request
 
@@ -569,7 +569,7 @@ curl -H 'Accept: application/vnd.pixomatix.v1' \
      -H 'Content-Type: application/json' \
      -H 'Accept-Language: en-US' \
      -w '\nResponse Code: %{http_code}\n' \
-     -X GET http://api.pixomatix.com/api/images/3086ed853a7336bc33c29e0dd674535c/galleries
+     -X GET http://api.pixomatix.com/api/galleries/3086ed853a7336bc/galleries
 ```
 
 ###### Response
@@ -577,23 +577,23 @@ curl -H 'Accept: application/vnd.pixomatix.v1' \
 ```javascript
   [
     {
-      "id":"ccdce535cf8cfdfd047ec52d3e04f489",
+      "id":"ccdce535cf8cfdfd",
       "caption":"Mc D, Hyderabad Central",
       "vertical":false,
-      "is_image":false,
+      "is_photo":false,
       "is_gallery":true,
       "has_galleries":false,
-      "has_images":true,
+      "has_photos":true,
       "has_parent":true,
-      "parent_id":"3086ed853a7336bc33c29e0dd674535c",
-      "thumbnail_url":"http://api.pixomatix.com/cache/ccdce535cf8cfdfd047ec52d3e04f489/4807869cde3ab130d2d60b9a68f091de_200x200.jpg"
+      "parent_id":"3086ed853a7336bc",
+      "thumbnail_url":"http://api.pixomatix.com/cache/ccdce535cf8cfdfd/4807869cde3ab130_200x200.jpg"
     },
     ...
   ]
   Response Code: 200
 ```
 
-#### <a name="images_image"></a>First image id in a gallery if present : `GET /api/images/:id/image` [&uarr; API](#api_endpoints)
+#### <a name="images_photo"></a>First photo id in a gallery if present : `GET /api/galleries/:id/photo` [&uarr; API](#api_endpoints)
 
 ###### Request
 
@@ -602,7 +602,7 @@ curl -H 'Accept: application/vnd.pixomatix.v1' \
      -H 'Content-Type: application/json' \
      -H 'Accept-Language: en-US' \
      -w '\nResponse Code: %{http_code}\n' \
-     -X GET http://api.pixomatix.com/api/images/ccdce535cf8cfdfd047ec52d3e04f489/image
+     -X GET http://api.pixomatix.com/api/galleries/ccdce535cf8cfdfd/photo
 ```
 
 ###### Response
@@ -618,12 +618,12 @@ OR
 
 ```javascript
   {
-    "id":"5cf976e90781546b906daa98a8effdcb"
+    "id":"5cf976e90781546b"
   }
   Response Code: 200
 ```
 
-#### <a name="images_parent"></a>Parent id which has galleries (may be parent of parent and so on) : `GET /api/images/:id/parent` [&uarr; API](#api_endpoints)
+#### <a name="images_parent"></a>Parent id which has galleries (may be parent of parent and so on) : `GET /api/galleries/:id/parent` [&uarr; API](#api_endpoints)
 
 ###### Request
 
@@ -632,7 +632,7 @@ curl -H 'Accept: application/vnd.pixomatix.v1' \
      -H 'Content-Type: application/json' \
      -H 'Accept-Language: en-US' \
      -w '\nResponse Code: %{http_code}\n' \
-     -X GET http://api.pixomatix.com/api/images/ccdce535cf8cfdfd047ec52d3e04f489/parent
+     -X GET http://api.pixomatix.com/api/galleries/ccdce535cf8cfdfd/parent
 ```
 
 ###### Response
@@ -640,7 +640,7 @@ curl -H 'Accept: application/vnd.pixomatix.v1' \
 
 ```javascript
   {
-    "parent_id":"3086ed853a7336bc33c29e0dd674535c"
+    "parent_id":"3086ed853a7336bc"
   }
   Response Code: 200
 ```

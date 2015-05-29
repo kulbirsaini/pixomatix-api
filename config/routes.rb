@@ -32,13 +32,13 @@ Rails.application.routes.draw do
         end
       end
 
-      resources :images, only: [:index, :show]  do
+      resources :galleries, controller: :images, only: [:index, :show]  do
         member do
           get :original
           get :download
           get :galleries
-          get :images
-          get :image
+          get :photos
+          get :photo
           get :parent
         end
       end

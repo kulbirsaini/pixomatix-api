@@ -1,10 +1,11 @@
 class Image < ActiveRecord::Base
-  has_many :images, -> { where.not(filename: nil) }, class_name: 'Image', foreign_key: 'parent_id'
-  has_many :children, -> { where(filename: nil).order(:path) }, class_name: 'Image', foreign_key: 'parent_id'
+  has_many :photos, -> { where.not(filename: nil) }, class_name: 'Image', foreign_key: 'parent_id'
+  has_many :galleries, -> { where(filename: nil).order(:path) }, class_name: 'Image', foreign_key: 'parent_id'
   belongs_to :parent, class_name: 'Image', foreign_key: 'parent_id'
+  belongs_to :user
 
   scope :root, -> { where(parent_id: nil) }
-  scope :images, -> { where.not(filename: nil) }
+  scope :photos, -> { where.not(filename: nil) }
   scope :ordered, -> { order(:filename, :path) }
 
   after_create :update_parent
@@ -12,10 +13,12 @@ class Image < ActiveRecord::Base
   after_destroy :update_parent
 
   validates :uid, presence: true, uniqueness: true
+  #FIXME populate images need to be synced before enabling this validation
+  #validates :user_id, presence: true, numericality: { only_integer: true, greater_than: 0 }
 
   def directory_tree(index = false)
     parents = []
-    next_parent = image? ? parent : self
+    next_parent = photo? ? parent : self
     while next_parent
       if index
         parents << next_parent.uid
@@ -41,12 +44,12 @@ class Image < ActiveRecord::Base
     parent_id.nil?
   end
 
-  def image?
+  def photo?
     !filename.nil?
   end
 
   def vertical?
-    image? && height > width
+    photo? && height > width
   end
 
   def gallery?
@@ -63,7 +66,7 @@ class Image < ActiveRecord::Base
   end
 
   def scale(width, height, filepath)
-    return nil if !image?
+    return nil if !photo?
     FileUtils.mkdir_p(File.dirname(filepath))
     image = Magick::Image.read(self.original_path).first
     image.scale!(width, height)
@@ -73,7 +76,7 @@ class Image < ActiveRecord::Base
   end
 
   def resize_to_hdtv(height, filepath)
-    return nil if !image?
+    return nil if !photo?
     if self.width >= self.height
       if self.height <= height
         return
@@ -99,7 +102,7 @@ class Image < ActiveRecord::Base
   end
 
   def absolute_thumbnail_path
-    return nil unless image?
+    return nil unless photo?
     File.join(Rails.application.config.x.image_cache_dir,
               self.parent_directory(true),
               self.uid.to_s + '_' +
@@ -109,7 +112,7 @@ class Image < ActiveRecord::Base
   end
 
   def thumbnail_path
-    return nil unless image?
+    return nil unless photo?
     return aws_thumb_url if aws_thumb_url.present? && Rails.application.config.x.use_aws
     path = File.join(Rails.application.config.x.image_cache_path_prefix,
               self.parent_directory(true),
@@ -121,7 +124,7 @@ class Image < ActiveRecord::Base
   end
 
   def absolute_hdtv_path
-    return nil unless image?
+    return nil unless photo?
     File.join(Rails.application.config.x.image_cache_dir,
               self.parent_directory(true),
               self.uid.to_s + '_' +
@@ -130,7 +133,7 @@ class Image < ActiveRecord::Base
   end
 
   def hdtv_path
-    return nil unless image?
+    return nil unless photo?
     return aws_hdtv_url if aws_hdtv_url.present? && Rails.application.config.x.use_aws
     path = File.join(Rails.application.config.x.image_cache_path_prefix,
               self.parent_directory(true),
@@ -141,7 +144,7 @@ class Image < ActiveRecord::Base
   end
 
   def original_path
-    return nil unless image?
+    return nil unless photo?
     path = File.join(self.directory_tree, self.filename)
     File.exists?(path) ? path : nil
   end
@@ -153,12 +156,12 @@ class Image < ActiveRecord::Base
     path.gsub('_', ' ').gsub(/^[0-9]+ /, '').gsub(/^[0-9]+\. /, '').titleize
   end
 
-  def get_random_image
-    return self if image?
-    return images.limit(1).order('RAND()').first if images.first
-    children.each do |child|
-      image = child.get_random_image
-      return image if image && image.image?
+  def get_random_photo
+    return self if photo?
+    return photos.limit(1).order('RAND()').first if photos.first
+    galleries.each do |gallery|
+      image = gallery.get_random_photo
+      return image if image && image.photo?
     end
     nil
   end
@@ -167,8 +170,8 @@ class Image < ActiveRecord::Base
 
   def update_parent
     return unless parent
-    parent.has_galleries = parent.children.first.present?
-    parent.has_images = parent.images.first.present?
+    parent.has_galleries = parent.galleries.first.present?
+    parent.has_photos = parent.photos.first.present?
     parent.save
   end
 end

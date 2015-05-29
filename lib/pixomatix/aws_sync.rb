@@ -14,7 +14,7 @@ module Pixomatix
       end
       self.info("AwsSync::sync_thumbnails Start", msg_to_stdout)
       bucket = Aws::S3::Resource.new.bucket(Rails.application.config.x.s3_bucket)
-      (images || Image.images).where.not(uid: get_image_ids_from_bucket(bucket, :thumbnail)).each do |image|
+      (images || Image.photos).where.not(uid: get_image_ids_from_bucket(bucket, :thumbnail)).each do |image|
         filepath = image.absolute_thumbnail_path
         aws_key = image.thumbnail_path
         if File.exists?(filepath)
@@ -38,7 +38,7 @@ module Pixomatix
       self.info("AwsSync::sync_hdtv_images Start", msg_to_stdout)
       public_dir = File.join(Rails.root, 'public/')
       bucket = Aws::S3::Resource.new.bucket(Rails.application.config.x.s3_bucket)
-      (images || Image.images).where.not(uid: get_image_ids_from_bucket(bucket, :hdtv)).each do |image|
+      (images || Image.photos).where.not(uid: get_image_ids_from_bucket(bucket, :hdtv)).each do |image|
         filepath = image.absolute_hdtv_path
         filepath = image.original_path unless File.exists?(filepath)
         aws_key = image.hdtv_path || image.absolute_hdtv_path.gsub(public_dir, '')

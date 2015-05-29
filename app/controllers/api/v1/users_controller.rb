@@ -3,7 +3,7 @@ class Api::V1::UsersController < Api::V1::BaseController
   def update
     if @current_user.update(update_params)
       @current_user.clear_tokens if update_params[:password].present?
-      render_message({ user: @current_user, notice: scoped_t('users.update_success') })
+      render_message({ user: @current_user.reload, notice: scoped_t('users.update_success') })
     else
       render_message({ error: @current_user.errors.full_messages, notice: scoped_t('users.update_failed'), status: :unprocessable_entity })
     end

@@ -5,6 +5,8 @@ class User < ActiveRecord::Base
 
   TOKEN_LIFE = 2.weeks
 
+  has_many :images
+
   before_save :encrypt_password
   before_save :drop_expired_token
   before_create :set_confirmation_token
