@@ -222,3 +222,6 @@ DEPENDENCIES
   thin
   uglifier
   unicorn
+
+BUNDLED WITH
+   1.10.1

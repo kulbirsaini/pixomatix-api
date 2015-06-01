@@ -11,29 +11,38 @@ class Api::V1::ImagesController < Api::V1::BaseController
   end
 
   def original
-    image_path = @image.original_path || get_asset_path("default_gallery_image_original.png")
+    if @image.original_path.present?
+      image_path = @image.original_path
+      size = @image.size
+      mime_type = @image.mime_type
+      filename = "#{@image.uid}#{File.extname(image_path)}"
+      response.headers["Accept-Ranges"]=  "bytes"
+      response.etag = @image
+    else
+      image_path = File.join(Rails.root, 'app/assets/images/default_gallery_image_original.png')
+      size = File.size(image_path)
+      mime_type = 'image/png'
+      filename = 'default_gallery_image_original.png'
+      response.etag = Digest::MD5.hexdigest(filename)
+    end
 
-    send_params = { type: @image.mime_type || 'image/png', disposition: :inline, stream: true, filename: "#{@image.uid}#{File.extname(image_path)}" }
+    send_params = { type: mime_type, disposition: :inline, stream: true, filename: filename }
 
-    response.headers["Pragma"] = "no-cache"
-    response.headers["Accept-Ranges"]=  "bytes"
-    response.headers["Expires"]= 6.months.from_now.httpdate
     response.headers["Content-Transfer-Encoding"] = "binary"
-
     response.last_modified = File.mtime(image_path)
-    response.etag = @image
+    response.headers["Pragma"] = "no-cache"
+    response.headers["Expires"]= 6.months.from_now.httpdate
     response.cache_control.merge!( max_age: 6.months.to_i, public: true, must_revalidate: true )
 
-    if request.headers["Range"]
-      bytes = Rack::Utils.byte_ranges(request.headers, @image.size)[0]
-      p bytes
+    if request.headers["Range"].present?
+      bytes = Rack::Utils.byte_ranges(request.headers, size)[0]
       length = bytes.end - bytes.begin
-      response.headers["Content-Range"] = "bytes #{bytes.begin}-#{bytes.end}/#{@image.size}"
+      response.headers["Content-Range"] = "bytes #{bytes.begin}-#{bytes.end}/#{size}"
       response.headers["Content-Length"] = (bytes.end - bytes.begin + 1).to_s
 
       send_data IO.binread(image_path, length, bytes.begin), send_params.merge( status: :partial_content )
     else
-      response.headers["Content-Length"] = @image.size.to_s
+      response.headers["Content-Length"] = size.to_s
       send_file image_path, send_params.merge( status: :ok )
     end
   end
