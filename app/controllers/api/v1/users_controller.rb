@@ -1,4 +1,5 @@
 class Api::V1::UsersController < Api::V1::BaseController
+  before_action :authenticate!
 
   def update
     if @current_user.update(update_params)
