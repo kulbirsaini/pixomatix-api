@@ -2,7 +2,7 @@ source 'https://rubygems.org'
 
 gem 'rails', '4.2.1'
 gem 'mysql2'
-gem 'jbuilder', '~> 2.0'
+gem 'jbuilder'
 gem 'uglifier'
 gem 'sass-rails'
 gem 'therubyracer'
@@ -33,7 +33,7 @@ group :development, :test do
   gem 'spring'
 
   # Auto deploys
-  gem 'capistrano', '~> 3.4.0'
+  gem 'capistrano'
   gem 'capistrano-bundler'
   gem 'capistrano-rails'
   gem 'capistrano-rvm'

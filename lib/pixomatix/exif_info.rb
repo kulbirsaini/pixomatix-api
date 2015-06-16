@@ -1,5 +1,6 @@
 module Pixomatix
   class ExifInfo
+    # This is not used nowhere for now
     def initialize(file)
       @image_path = file
       @result = Exiftool.new(file).results.first
