@@ -13,8 +13,7 @@ class Image < ActiveRecord::Base
   after_destroy :update_parent
 
   validates :uid, presence: true, uniqueness: true
-  #FIXME populate images need to be synced before enabling this validation
-  #validates :user_id, presence: true, numericality: { only_integer: true, greater_than: 0 }
+  validates :user_id, presence: true, numericality: { only_integer: true, greater_than: 0 }
 
   def directory_tree(index = false)
     parents = []

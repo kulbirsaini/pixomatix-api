@@ -6,6 +6,8 @@ class User < ActiveRecord::Base
   TOKEN_LIFE = 2.weeks
 
   has_many :images
+  has_many :photos, through: :images
+  has_many :galleries, through: :images
 
   before_save :encrypt_password
   before_save :drop_expired_token

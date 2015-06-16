@@ -3,9 +3,10 @@ module Pixomatix
     extend Pixomatix::Common
     attr_reader :directories
 
-    def initialize(directories = nil)
+    def initialize(user = nil, directories = nil)
       directories = directories.present? ? [ directories ].flatten : nil
       @directories = directories || Rails.application.config.x.image_root
+      @user = user
     end
 
     def self.unique_id_for_text(data)
@@ -194,17 +195,18 @@ module Pixomatix
       self.class.info("ImageSync::rename_images_from_directory Finish #{directory}", msg_to_stdout)
     end
 
-    def create_gallery(directory, parent_gallery)
-      gallery = Image.where(path: directory, parent: parent_gallery).first_or_initialize
+    def build_gallery(directory, parent_gallery)
+      gallery = Image.where(user_id: @user.id, path: directory, parent: parent_gallery, filename: nil).first_or_initialize
       gallery.uid = self.class.unique_id_for_text(File.join(parent_gallery.try(:directory_tree).to_s, directory))
       gallery
     end
 
     def populate_images(directory = nil, parent_gallery = nil, msg_to_stdout = false)
+      raise "User is not set" unless @user
       self.class.info("ImageSync::populate_images Start", msg_to_stdout) unless parent_gallery
       if directory
         cur_directory = parent_gallery.present? ? File.join(parent_gallery.directory_tree, directory) : directory
-        gallery = create_gallery(directory, parent_gallery)
+        gallery = build_gallery(directory, parent_gallery)
         unless gallery.save
           self.class.info("ImageSync::populate_images no gallery for #{directory}, parent_id: #{parent_gallery.id}, errors: #{gallery.errors.messages}", msg_to_stdout)
           return
@@ -219,7 +221,7 @@ module Pixomatix
         end
       else
         @directories.each do |directory|
-          gallery = create_gallery(directory, parent_gallery)
+          gallery = build_gallery(directory, parent_gallery)
           unless gallery.save
             self.class.info("ImageSync::populate_images no gallery for #{directory}, parent_id: #{parent_gallery.try(:id)}, errors: #{gallery.errors.messages}", msg_to_stdout)
             return
@@ -238,7 +240,7 @@ module Pixomatix
     end
 
     def populate_images_from_directory(directory, parent_gallery, msg_to_stdout = false)
-      gallery = create_gallery(directory, parent_gallery)
+      gallery = build_gallery(directory, parent_gallery)
       unless gallery.save
         self.class.info("ImageSync::populate_images_from_directory no gallery for #{directory}, parent_id: #{parent_gallery.try(:id)}, errors: #{gallery.errors.messages}", msg_to_stdout)
         return
@@ -254,17 +256,17 @@ module Pixomatix
                         result
                       end
 
-      gallery.photos.where.not(uid: images_in_dir.keys).each do |image|
+      gallery.photos.where(user_id: @user.id).where.not(uid: images_in_dir.keys).each do |image|
         self.class.info("ImageSync::populate_images_from_directory Deleted Image: #{image.id} #{File.join(directory, image.filename)}", msg_to_stdout)
         image.destroy
       end
       images_in_dir.each do |uid, data|
-        new_image = gallery.photos.where(uid: uid).first
+        new_image = gallery.photos.where(uid: uid, user_id: @user.id).first
         if new_image
           new_image.filename = data[:filename]
         else
           image = MiniMagick::Image.open(data[:filepath])
-          new_image = gallery.photos.where(filename: data[:filename], uid: uid, width: image.width, height: image.height, size: image.size, mime_type: image.mime_type).first_or_initialize
+          new_image = gallery.photos.where(filename: data[:filename], uid: uid, user_id: @user.id, width: image.width, height: image.height, size: image.size, mime_type: image.mime_type).first_or_initialize
           image.destroy!
         end
         if new_image.save
